@@ -1,11 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './HomeScreen';
-import DetailsScreen from './DetailScreen';
+import HomeScreen from '../screens/HomeScreen';
+import DetailsScreen from '../screens/DetailScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ProfileScreen from './ProfileScreen';
-import ExploreScreen from './ExploreScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import ExploreScreen from '../screens/ExploreScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 const Tab = createMaterialBottomTabNavigator();

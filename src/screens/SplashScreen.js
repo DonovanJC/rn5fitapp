@@ -1,15 +1,46 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from 'react-native-animatable';
+
 const SplashScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <Animatable.Image
+                    animation='bounceIn'
+                    duraton='1500'
+                    source={require('../../assets/fitLogo2.png')}
+                    style={styles.logo}
+                    resizeMode='stretch'
+                />
+            </View>
+            <Animatable.View 
+            style={styles.footer}
+            animation='fadeInUpBig'
+            >
+                <Text style={styles.title}>Stay Connected with everyone!!</Text>
+                <Text style={styles.text}>Sign in with account</Text>
+                <View style={styles.button}>
+                    <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                        <LinearGradient
+                            colors={['#a767f0', '#9960fc']}
+                            style={styles.signIn}
+                        >
+                            <Text style={styles.textSign}>Get Started</Text>
+                            <MaterialIcons name='navigate-next' color='#fff' size={20} />
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
+            </Animatable.View>
         </View>
     );
 };
 
 export default SplashScreen;
 
-const {height} = Dimensions.get("screen");
+const { height } = Dimensions.get("screen");
 const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({

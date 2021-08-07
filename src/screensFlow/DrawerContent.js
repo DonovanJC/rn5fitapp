@@ -11,9 +11,13 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
 
+import { AuthContext } from '../components/context';
+
 export function DrawerContent(props) {
 
     const [isDarkTheme, setisDarkTheme] = React.useState(false);
+
+    // const { signOut } = React.useContext(AuthContext);
 
     const toggleTheme = () => {
         setisDarkTheme(!isDarkTheme);
@@ -119,7 +123,7 @@ export function DrawerContent(props) {
                             size={size} />
                     )}
                     label='Sign Out'
-                    onPress={() => { }}
+                    onPress={() => console.log('singouttttt')}
                 />
             </Drawer.Section>
         </View>

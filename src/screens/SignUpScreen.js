@@ -23,7 +23,10 @@ const SignUpScreen = ({ navigation }) => {
         confirm_password: '',
         check_textInputChange: false,
         secureTextEntry: true,
-        confirm_secureTextEntry: true
+        confirm_secureTextEntry: true,
+        isValidEmail: true,
+        isValidPassword: true,
+        isValidConfirmPassword: true
     });
 
     const textInputChange = (val) => {
@@ -70,6 +73,61 @@ const SignUpScreen = ({ navigation }) => {
         });
     }
 
+    const handleValidEmail = (val) => {
+        console.log(val);
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        check = re.test(String(val.trim()).toLowerCase());
+        console.log(check);
+        if (check) {
+            setData({
+                ...data,
+                email: val,
+                check_textInputChange: true,
+                isValidEmail: true,
+            })
+        }
+        else {
+            setData({
+                ...data,
+                email: val,
+                check_textInputChange: false,
+                isValidEmail: false
+            })
+        }
+    }
+
+    const handleValidPassword = (val) => {
+        if (val.trim().length >= 8) {
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: true
+            });
+        } else {
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: false
+            });
+        }
+    }
+
+    const handleValidConfirmPassword = (val) => {
+        if (val.trim().length > 0 && val.trim() == data.password.trim()) {
+            setData({
+                ...data,
+                confirm_password: val,
+                isValidConfirmPassword: true
+            })
+        } else {
+            setData({
+                ...data,
+                confirm_password: val,
+                isValidConfirmPassword: false
+            })
+        }
+    }
+
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#aa80ff' barStyle='light-content' />
@@ -92,6 +150,7 @@ const SignUpScreen = ({ navigation }) => {
                         style={styles.textInput}
                         autoCapitalize='none'
                         onChangeText={(val) => textInputChange(val)}
+                        onEndEditing={(val) => handleValidEmail(val.nativeEvent.text)}
                     />
                     {data.check_textInputChange ?
                         <Animatable.View
@@ -107,6 +166,12 @@ const SignUpScreen = ({ navigation }) => {
                     }
 
                 </View>
+                {data.isValidEmail ? null
+                    :
+                    <Animatable.View animation='fadeInLeft' duration={500}>
+                        <Text style={styles.errorMsg}>Please enter a valid email</Text>
+                    </Animatable.View>
+                }
 
                 <Text style={[styles.text_footer, { marginTop: 35 }]}>Password</Text>
                 <View style={styles.action}>
@@ -121,6 +186,7 @@ const SignUpScreen = ({ navigation }) => {
                         style={styles.textInput}
                         autoCapitalize='none'
                         onChangeText={(val) => handlePasswordChange(val)}
+                        onEndEditing={(val) => handleValidPassword(val.nativeEvent.text)}
                     />
                     <TouchableOpacity onPress={updateSecureTextEntry}>
                         {data.secureTextEntry ?
@@ -139,6 +205,12 @@ const SignUpScreen = ({ navigation }) => {
 
                     </TouchableOpacity>
                 </View>
+                {data.isValidPassword ? null
+                    :
+                    <Animatable.View animation='fadeInLeft' duration={500}>
+                        <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
+                    </Animatable.View>
+                }
 
                 <Text style={[styles.text_footer, { marginTop: 35 }]}>Confirm Password</Text>
                 <View style={styles.action}>
@@ -153,6 +225,7 @@ const SignUpScreen = ({ navigation }) => {
                         style={styles.textInput}
                         autoCapitalize='none'
                         onChangeText={(val) => handleConfirmPasswordChange(val)}
+                        onEndEditing={(val) => handleValidConfirmPassword(val.nativeEvent.text)}
                     />
                     <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
                         {data.confirm_secureTextEntry ?
@@ -171,11 +244,20 @@ const SignUpScreen = ({ navigation }) => {
 
                     </TouchableOpacity>
                 </View>
+                {data.isValidConfirmPassword ? null
+                    :
+                    <Animatable.View animation='fadeInLeft' duration={500}>
+                        <Text style={styles.errorMsg}>Confirm password must be the same.</Text>
+                    </Animatable.View>
+                }
 
                 <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
-                        onPress={() => register(data.email, data.password)}
+                        onPress={() => {
+                            data.isValidEmail && data.isValidPassword && data.isValidConfirmPassword ? register(data.email, data.password)
+                                : null
+                        }}
                     >
                         <LinearGradient
                             colors={['#a767f0', '#9960fc']}

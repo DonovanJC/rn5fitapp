@@ -7,13 +7,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from 'react-native-animatable';
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { AuthContext } from "../components/context";
-
-import users from '../model/users';
+import { AuthContext } from "../navigation/AuthProvider";
 
 const SignInScreen = ({ navigation }) => {
 
-    // const { signIn } = React.useContext(AuthContext);
+    const { login } = React.useContext(AuthContext);
 
     const [data, setData] = React.useState({
         email: '',
@@ -55,29 +53,29 @@ const SignInScreen = ({ navigation }) => {
         });
     }
 
-    const loginHandle = (email, password) => {
-        const foundUser = users.filter( item => {
-            return email == item.email && password == item.password
-        });
+    // const loginHandle = (email, password) => {
+    //     const foundUser = users.filter( item => {
+    //         return email == item.email && password == item.password
+    //     });
 
-        if (data.email.length == 0 || data.password.length == 0) {
-            Alert.alert('Wrong Input', 'User email or password cannot be empty.',
-            [{ text: 'Okay'} ]);
-            return;
-        }
+    //     if (data.email.length == 0 || data.password.length == 0) {
+    //         Alert.alert('Wrong Input', 'User email or password cannot be empty.',
+    //         [{ text: 'Okay'} ]);
+    //         return;
+    //     }
 
-        if(foundUser.length == 0) {
-            Alert.alert('Invalid User:',
-             'User email or password is incorrect.',[{text:'Okay'}]);
-             return;
-        }
-        signIn(foundUser);
-    }
+    //     if(foundUser.length == 0) {
+    //         Alert.alert('Invalid User:',
+    //          'User email or password is incorrect.',[{text:'Okay'}]);
+    //          return;
+    //     }
+    //     signIn(foundUser);
+    // }
 
     const handleValidEmail = (val) => {
         console.log(val);
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        check =  re.test(String(val.trim()).toLowerCase());
+        check = re.test(String(val.trim()).toLowerCase());
         console.log(check);
         if (check) {
             setData({
@@ -205,7 +203,11 @@ const SignInScreen = ({ navigation }) => {
                 <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
-                        onPress={() => { loginHandle(data.email, data.password) }}
+                        onPress={() => {
+                            data.isValidEmail && data.isValidPassword ?
+                                login(data.email, data.password)
+                                : null
+                        }}
                     >
                         <LinearGradient
                             colors={['#a767f0', '#9960fc']}

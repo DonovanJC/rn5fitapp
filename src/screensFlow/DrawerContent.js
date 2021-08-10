@@ -11,9 +11,11 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
 
-import { AuthContext } from '../components/context';
+import { AuthContext } from '../navigation/AuthProvider';
 
 export function DrawerContent(props) {
+
+    const {user, logout} = React.useContext(AuthContext)
 
     const [isDarkTheme, setisDarkTheme] = React.useState(false);
 
@@ -35,7 +37,7 @@ export function DrawerContent(props) {
                             />
 
                             <View style={{ marginLeft: 15, flexDirection: 'column' }}>
-                                <Title style={styles.title}>User FUllName</Title>
+                                <Title style={styles.title}>{user.email}</Title>
                                 <Caption styles={styles.caption}>User ID</Caption>
                             </View>
                         </View>
@@ -123,7 +125,7 @@ export function DrawerContent(props) {
                             size={size} />
                     )}
                     label='Sign Out'
-                    onPress={() => console.log('singouttttt')}
+                    onPress={() => logout()}
                 />
             </Drawer.Section>
         </View>

@@ -23,7 +23,6 @@ const StarRating = (props) => {
     return (
         <View style={ styles.container }>
             { stars }
-            <Text style={styles.text}>({props.reviews})</Text>
         </View>
     );
 	

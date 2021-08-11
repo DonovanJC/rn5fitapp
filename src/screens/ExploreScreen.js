@@ -5,15 +5,15 @@ import {
     Platform, TouchableOpacity, Image, Animated, ScrollView
 } from "react-native";
 
-import { Ionicons, MaterialCommunityIcons, Fontisto } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { markers } from '../model/mapdata';
 import StarRating from '../components/StarRating';
-import { State } from "react-native-gesture-handler";
+import { useEffect } from "react/cjs/react.development";
 
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = 220;
-const CARD_WIDTH = width * 0.8;
+const CARD_WIDTH = width * 0.7;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const ExploreScreen = ({ navigation }) => {
@@ -24,11 +24,68 @@ const ExploreScreen = ({ navigation }) => {
             latitude: 51.509865,
             longitude: -0.118092,
             latitudeDelta: 0.12,
-            longitudeDelta: 0.421,
+            longitudeDelta: 0.641,
         }
     }
 
     const [state, setState] = React.useState(initialMapState);
+
+    let mapIndex = 0;
+    let mapAnimation = new Animated.Value(0);
+
+    useEffect(() => {
+        mapAnimation.addListener(({ value }) => {
+            let index = Math.floor(value / CARD_WIDTH + 0.3); //animated 30% away from landing on next
+            if (index >= state.markers.length) {
+                index = state.markers.length - 1;
+            }
+            if (index <= 0) {
+                index = 0;
+            }
+
+            clearTimeout(regionTimeout);
+
+            const regionTimeout = setTimeout(() => {
+                if (mapIndex != index) {
+                    mapIndex = index;
+                    const { coordinate } = state.markers[index];
+                    _map.current.animateToRegion({
+                        ...coordinate,
+                        latitudeDelta: state.region.latitudeDelta,
+                        longitudeDelta: state.region.longitudeDelta
+                    },
+                        350
+                    );
+                }
+            }, 10);
+        });
+    });
+
+    const interpolations = state.markers.map((marker, index) => {
+        const inputRange = [
+            (index - 1) * CARD_WIDTH,
+            index * CARD_WIDTH,
+            ((index + 1) * CARD_WIDTH),
+        ];
+
+        const scale = mapAnimation.interpolate({
+            inputRange,
+            outputRange: [1, 1.5, 1],
+            extrapolate: 'clamp'
+        });
+
+        return { scale };
+    });
+
+    const onMarkerPress = (mapEventData) => {
+        const markerId = mapEventData._targetInst.return.key;
+        let x = (markerId * CARD_WIDTH) + (markerId * 20);
+        if (Platform.OS == "ios") {
+            x = x - SPACING_FOR_CARD_INSET;
+        }
+
+        _scrollView.current.scrollTo({x: x, y: 0, animated: true});
+    }
 
     const _map = React.useRef(null);
     const _scrollView = React.useRef(null);
@@ -42,12 +99,19 @@ const ExploreScreen = ({ navigation }) => {
                 style={styles.container}
             >
                 {state.markers.map((marker, index) => {
+                    const scaleStyle = {
+                        transform: [
+                            {
+                                scale: interpolations[index].scale,
+                            },
+                        ],
+                    }
                     return (
                         <Marker key={index} coordinate={marker.coordinate} onPress={(e) => onMarkerPress(e)}>
                             <Animated.View style={styles.markerWrap}>
                                 <Animated.Image
                                     source={require('../../assets/map_marker.png')}
-                                    style={[styles.marker]}
+                                    style={[styles.marker, scaleStyle]}
                                     resizeMode='cover'
                                 />
                             </Animated.View>
@@ -55,15 +119,61 @@ const ExploreScreen = ({ navigation }) => {
                     )
                 })}
             </MapView>
-            <View style={styles.searchBox}>
-                <TextInput
-                    placeholder='Serach Here'
-                    placeholderTextColor='#000'
-                    autoCapitalize='none'
-                    style={{ flex: 1, padding: 0 }}
-                />
-                <Ionicons name='ios-search' size={20} />
-            </View>
+            <TouchableOpacity style={styles.chipsItem} onPress={() => {navigation.navigate("Add Place")}}>
+                <MaterialIcons name="add" size={20} style={styles .chipsIcon}/>
+                <Text>Add a New Place</Text>
+            </TouchableOpacity>
+            <Animated.ScrollView
+                ref={_scrollView}
+                horizontal
+                scrollEventThrottle
+                showsHorizontalScrollIndicator={false}
+                style={styles.scrollView}
+                pagingEnabled
+                snapToInterval={CARD_WIDTH + 20}
+                snapToAlignment='center'
+                contentInset={{
+                    top: 0,
+                    left: SPACING_FOR_CARD_INSET,
+                    bottom: 0,
+                    right: SPACING_FOR_CARD_INSET
+                }}
+                contentContainerStyle={{
+                    paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
+                }}
+                onScroll={Animated.event(
+                    [
+                        {
+                            nativeEvent: {
+                                contentOffset: {
+                                    x: mapAnimation
+                                }
+                            },
+                        },
+                    ],
+                    { useNativeDriver: true }
+                )}
+            >
+                {state.markers.map((marker, index) => (
+                    <View style={styles.card} key={index}>
+                        <Image
+                            source={marker.image}
+                            style={styles.cardImage}
+                            resizeMode='cover'
+                        />
+                        <View style={styles.textContent}>
+                            <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
+                            <StarRating rating={marker.rating} />
+                            <Text numberOfLines={1} style={styles.cardDescription}>{marker.description}</Text>
+                            {/* <View style={styles.button}>
+                                <TouchableOpacity>
+                                    <Text>Gg</Text>
+                                </TouchableOpacity>
+                            </View> */}
+                        </View>
+                    </View>
+                ))}
+            </Animated.ScrollView>
         </View>
     );
 };
@@ -129,6 +239,8 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     chipsItem: {
+        position: "absolute",
+        top:15,
         flexDirection: "row",
         backgroundColor: '#fff',
         borderRadius: 20,
@@ -163,9 +275,10 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         shadowOpacity: 0.3,
         shadowOffset: { x: 2, y: -2 },
-        height: CARD_HEIGHT,
+        height: CARD_HEIGHT - 45,
         width: CARD_WIDTH,
         overflow: "hidden",
+        marginBottom:50
     },
     cardImage: {
         flex: 3,
@@ -174,8 +287,8 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     textContent: {
-        flex: 2,
-        padding: 10,
+        flex: 1,
+        padding: 15,
     },
     cardtitle: {
         fontSize: 12,

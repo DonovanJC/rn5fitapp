@@ -15,8 +15,7 @@ export const markers = [
         title: "Cheam Park",
         description: "This is the good exercise place",
         image: Images[0].image,
-        rating: 4,
-        reviews: 99,
+        rating: 4
     },
     {
         coordinate: {
@@ -26,8 +25,7 @@ export const markers = [
         title: "Second Park",
         description: "This is the second park",
         image: Images[1].image,
-        rating: 5,
-        reviews: 102,
+        rating: 5
     },
     {
         coordinate: {
@@ -37,8 +35,7 @@ export const markers = [
         title: "Norbury Park",
         description: "This is the third park",
         image: Images[2].image,
-        rating: 3,
-        reviews: 220,
+        rating: 3
     },
     {
         coordinate: {
@@ -48,8 +45,7 @@ export const markers = [
         title: "Palewell Common Park",
         description: "This is the fourth park",
         image: Images[3].image,
-        rating: 4,
-        reviews: 48,
+        rating: 4
     },
     {
         coordinate: {
@@ -59,7 +55,6 @@ export const markers = [
         title: "Osterley Sports & Athletics Centre",
         description: "This is the fifth best food place",
         image: Images[4].image,
-        rating: 4,
-        reviews: 178,
+        rating: 4
     },
 ];

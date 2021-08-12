@@ -91,7 +91,7 @@ const ExploreStackScreen = ({ navigation }) => (
                 />
             )
         }} />
-        <ExploreStack.Screen name="Add Place" component={AddPlaceScreen} />
+        <ExploreStack.Screen name="Add Place" component={AddPlaceScreen} options={{title:''}} />
     </ExploreStack.Navigator>
 );
 

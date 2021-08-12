@@ -1,8 +1,11 @@
 import React from "react";
 import {
-    View, Text, TextInput, Button, StyleSheet, Alert,
-    Platform, ActivityIndicator, Image
+    View, Text, StyleSheet, Alert,
+    Platform, ActivityIndicator, Image, TouchableOpacity
 } from "react-native";
+import { TextInput, Button } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
+
 import Firebase from "../database/firebase";
 import Geocoder from "react-native-geocoding";
 // import ImagePicker from 'react-native-image-crop-picker';
@@ -11,9 +14,11 @@ import { Ionicons } from '@expo/vector-icons/Ionicons'
 import { AuthContext } from '../navigation/AuthProvider';
 
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import { Permission } from 'expo';
 
-const db = Firebase.firestore();
 Geocoder.init("AIzaSyASYLMRcWSSxC_QbznjGA0hNRkl4-OjE_A");
+const db = Firebase.firestore();
 
 const AddPlaceScreen = ({ navigation }) => {
 
@@ -29,20 +34,9 @@ const AddPlaceScreen = ({ navigation }) => {
     const [uploading, setUploading] = React.useState(false);
     const [place, setPlace] = React.useState(null);
 
-    const takePhotoFromCamera = () => {
-        ImagePicker.openCamera({
-            width: 1200,
-            height: 780,
-            cropping: true,
-        }).then((image) => {
-            console.log(image);
-            const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-            setImage(imageUri);
-        });
-    };
-
     ///Select Image from library
     const choosePhotoFromLibrary = async () => {
+        getCoordinates();
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (permissionResult.granted === false) {
@@ -57,27 +51,34 @@ const AddPlaceScreen = ({ navigation }) => {
         }
         setImage(pickerResult.uri);
     };
-
-    ///Add a new place to our common FIRESTORE Database
-    const submitPlace = async () => {
-        console.log(image);
-        const imageUrl = await uploadImage();
-        console.log('Image Url: ', imageUrl);
-
+    ///// Get coordinates
+    const getCoordinates = async () => {
         let fulladdress = data.street + " " + data.number + " " + data.postCode
+        console.log(fulladdress);
         Geocoder.from(fulladdress)
             .then(json => {
                 let location = json.results[0].geometry.location;
                 setPlace(location);
             })
             .catch(error => console.warn(error));
-
         console.log(place);
+    }
+
+    ///Add a new place to our common FIRESTORE Database
+    const submitPlace = async () => {
+
+        getCoordinates();
+
+        const imageUrl = await uploadImage();
+        console.log('Image Url: ', imageUrl);
+        let coordinates = place;
+        console.log(coordinates);
+
         db.collection('places')
             .add({
                 userId: user.uid,
-                latitude: place.lat,
-                longitude: place.lng,
+                latitude: coordinates.lat,
+                longitude: coordinates.lng,
                 url: imageUrl
             })
             .then(() => {
@@ -90,6 +91,7 @@ const AddPlaceScreen = ({ navigation }) => {
             .catch((error) => {
                 console.log('Something went wrong with added post to firestore.', error);
             });
+
     }
 
     ///Upload place's Image to FIrebase Cloud and get Url
@@ -130,56 +132,63 @@ const AddPlaceScreen = ({ navigation }) => {
     };
 
     return (
-        <View>
-            <Text>Add a New Place</Text>
-            <Text>Street</Text>
-            <TextInput
-                placeholder="Enter the street"
-                style={styles.textInput}
-                onChangeText={(val) => setData({ ...data, street: val })}
-            />
-
-            <Text>Number</Text>
-            <TextInput
-                placeholder="Enter the street number"
-                style={styles.textInput}
-                onChangeText={(val) => setData({ ...data, number: val })}
-            />
-
-            <Text>PostCode</Text>
-            <TextInput
-                placeholder="Enter the postcode"
-                style={styles.textInput}
-                onChangeText={(val) => setData({ ...data, postCode: val })}
-            />
-
-            {uploading ? (
-                <View>
-                    <Text>Completed!</Text>
+        <View style={styles.container}>
+            <Text style={styles.text_header}>Add a New Place</Text>
+            <View style={styles.footer}>
+                <Text style={styles.text1}>Enter the Address</Text>
+                <TextInput
+                    placeholder="Enter the street"
+                    mode='outlined'
+                    onChangeText={(val) => setData({ ...data, street: val })}
+                />
+                <View style={{ flexDirection: 'row' }}>
+                    <TextInput
+                        placeholder="Number"
+                        mode='outlined'
+                        style={{ padding: 1 }}
+                        onChangeText={(val) => setData({ ...data, number: val })}
+                    />
+                    <TextInput
+                        mode='outlined'
+                        placeholder='Postcode'
+                        style={{ padding: 1, borderRadius: 5 }}
+                        onChangeText={(val) => setData({ ...data, postCode: val })}
+                    />
+                    <TouchableOpacity>
+                        <View style={{ backgroundColor: '#9960fc', marginTop: 8, padding: 20, paddingRight: 40, paddingLeft: 35, borderRadius: 5 }}>
+                            <Text style={{ color: 'white' }}>Get Address</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-            ) : (
-                <Button onPress={submitPlace} title='Post Place' />
-            )}
+                <View style={styles.button}>
+                    <TouchableOpacity style={styles.signIn} onPress={choosePhotoFromLibrary}>
+                        <LinearGradient
+                            colors={['#a767f0', '#9960fc']}
+                            style={styles.signIn}
+                        >
+                            <Text style={[styles.textSign], {
+                                color: '#fff'
+                            }}>Upload an Image</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
 
-            {/* <Button title="GET COORDINATES" onPress={() => {
-                let fulladdress = data.street + " " + data.number + " " + data.postCode
-                Geocoder.from(fulladdress)
-                    .then(json => {
-                        var location = json.results[0].geometry.location;
-                        console.log(location);
-                    })
-                    .catch(error => console.warn(error));
-            }
-            } /> */}
-            <Button
-                title='Take Photo'
-                onPress={takePhotoFromCamera}
-            />
-            <Button title='test'
-                onPress={choosePhotoFromLibrary} />
-            {image == null ? <View></View>
-                : <Image source={{ uri: image }}
-                    style={styles.thumbnail} />}
+                <View style={styles.button}>
+                    <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
+                        <LinearGradient
+                            colors={['#a767f0', '#9960fc']}
+                            style={styles.signIn}
+                        >
+                            <Text style={[styles.textSign], {
+                                color: '#fff'
+                            }}>Add Place</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
+                {image == null ? <View></View>
+                    : <Image source={{ uri: image }}
+                        style={styles.thumbnail} />}
+            </View>
         </View>
     )
 }
@@ -193,14 +202,50 @@ const styles = StyleSheet.create({
     //     paddingLeft: 10,
     //     color: '#05375a',
     // }
+    text1: {
+        color: '#05375a',
+        fontSize: 25,
+        fontWeight:'bold'
+    },
+    text_header: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 30
+    },
     actionButtonIcon: {
         fontSize: 20,
         height: 22,
         color: 'white',
     },
     thumbnail: {
-        width: 300,
-        height: 300,
-        resizeMode: "contain"
+        width: 200,
+        height: 200,
+        resizeMode: "contain",
+        justifyContent:'center',
+        borderRadius:4,
+        marginHorizontal:40
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#aa80ff'
+    },
+    footer: {
+        flex: 3,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        paddingHorizontal: 20,
+        paddingVertical: 30
+    },
+    button: {
+        alignItems: 'center',
+        marginTop: 30
+    },
+    signIn: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
     }
 })

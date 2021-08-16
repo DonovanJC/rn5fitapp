@@ -5,8 +5,8 @@ import {
     View, Text, ActivityIndicator, ScrollView,
     StyleSheet, FlatList, TouchableOpacity, Image
 } from 'react-native';
-import Firebase from '../database/firebase';
 
+import Firebase from '../database/firebase';
 const db = Firebase.firestore();
 
 const ExercisesList = () => {
@@ -52,7 +52,7 @@ const ExercisesList = () => {
         }, [])
     );
 
-    
+
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
 

@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import {
     View, Text, StyleSheet, TextInput, Dimensions,
-    Platform, TouchableOpacity, Image, Animated, ScrollView
+    Platform, TouchableOpacity, Image, Animated, ScrollView,
+    ActivityIndicator
 } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { markers } from '../model/mapdata';
+// import { markers } from '../model/mapdata';
 import StarRating from '../components/StarRating';
-import { useEffect } from "react/cjs/react.development";
+import Firebase from "../database/firebase";
 
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -18,8 +20,8 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const ExploreScreen = ({ navigation }) => {
 
+
     const initialMapState = {
-        markers,
         region: {
             latitude: 51.509865,
             longitude: -0.118092,
@@ -27,17 +29,64 @@ const ExploreScreen = ({ navigation }) => {
             longitudeDelta: 0.641,
         }
     }
+    const [isLoading, setLoading] = React.useState(true);
+    const [region, setRegion] = React.useState(initialMapState.region);
+    const [places, setPlaces] = React.useState(null);
 
-    const [state, setState] = React.useState(initialMapState);
+    const fetchPosts = async () => {
+        try {
+            const list = [];
+
+            await Firebase.firestore().
+                collection('places')
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const { title, description, rating,
+                            url, latitude, longitude } = doc.data();
+
+                        list.push({
+                            coordinate: {
+                                latitude,
+                                longitude
+                            },
+                            title,
+                            description,
+                            image: url,
+                            rating
+                        })
+                    })
+                    setPlaces(list);
+                    setLoading(false);
+                })
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     let mapIndex = 0;
     let mapAnimation = new Animated.Value(0);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            setLoading(true);
+            fetchPosts();
+            // console.log(places);
+        }, [])
+    )
+
+    // useEffect(() => {
+    //     fetchPosts();
+    //     if (!isLoading) {
+    //         console.log(places);
+    //     }
+    // }, []);
+
     useEffect(() => {
         mapAnimation.addListener(({ value }) => {
             let index = Math.floor(value / CARD_WIDTH + 0.3); //animated 30% away from landing on next
-            if (index >= state.markers.length) {
-                index = state.markers.length - 1;
+            if (index >= places.length) {
+                index = places.length - 1;
             }
             if (index <= 0) {
                 index = 0;
@@ -48,11 +97,11 @@ const ExploreScreen = ({ navigation }) => {
             const regionTimeout = setTimeout(() => {
                 if (mapIndex != index) {
                     mapIndex = index;
-                    const { coordinate } = state.markers[index];
+                    const { coordinate } = places[index];
                     _map.current.animateToRegion({
                         ...coordinate,
-                        latitudeDelta: state.region.latitudeDelta,
-                        longitudeDelta: state.region.longitudeDelta
+                        latitudeDelta: region.latitudeDelta,
+                        longitudeDelta: region.longitudeDelta
                     },
                         350
                     );
@@ -61,7 +110,7 @@ const ExploreScreen = ({ navigation }) => {
         });
     });
 
-    const interpolations = state.markers.map((marker, index) => {
+    const interpolations = places.map((marker, index) => {
         const inputRange = [
             (index - 1) * CARD_WIDTH,
             index * CARD_WIDTH,
@@ -84,97 +133,108 @@ const ExploreScreen = ({ navigation }) => {
             x = x - SPACING_FOR_CARD_INSET;
         }
 
-        _scrollView.current.scrollTo({x: x, y: 0, animated: true});
+        _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
     }
 
     const _map = React.useRef(null);
     const _scrollView = React.useRef(null);
 
-    return (
-        <View style={styles.container}>
-            <MapView
-                ref={_map}
-                initialRegion={state.region}
-                provider={PROVIDER_GOOGLE}
-                style={styles.container}
-            >
-                {state.markers.map((marker, index) => {
-                    const scaleStyle = {
-                        transform: [
-                            {
-                                scale: interpolations[index].scale,
-                            },
-                        ],
-                    }
-                    return (
-                        <Marker key={index} coordinate={marker.coordinate} onPress={(e) => onMarkerPress(e)}>
-                            <Animated.View style={styles.markerWrap}>
-                                <Animated.Image
-                                    source={require('../../assets/map_marker.png')}
-                                    style={[styles.marker, scaleStyle]}
+    const RenderContent = () => {
+        if (isLoading) {
+            return (
+                <View style={[styles.container, styles.horizontal]}>
+                    <ActivityIndicator size='large' color="#0000ff"/>
+                </View>
+            );
+        }
+        else {
+            return (
+                <View style={styles.container}>
+
+                    <MapView
+                        ref={_map}
+                        initialRegion={region}
+                        provider={PROVIDER_GOOGLE}
+                        style={styles.container}
+                    >
+                        {places.map((marker, index) => {
+                            const scaleStyle = {
+                                transform: [
+                                    {
+                                        scale: interpolations[index].scale,
+                                    },
+                                ],
+                            }
+                            return (
+                                <Marker key={index} coordinate={marker.coordinate} onPress={(e) => onMarkerPress(e)}>
+                                    <Animated.View style={styles.markerWrap}>
+                                        <Animated.Image
+                                            source={require('../../assets/map_marker.png')}
+                                            style={[styles.marker, scaleStyle]}
+                                            resizeMode='cover'
+                                        />
+                                    </Animated.View>
+                                </Marker>
+                            )
+                        })}
+                    </MapView>
+                    <TouchableOpacity style={styles.chipsItem} onPress={() => { navigation.navigate("Add Place") }}>
+                        <MaterialIcons name="add" size={20} style={styles.chipsIcon} />
+                        <Text>Add a New Place</Text>
+                    </TouchableOpacity>
+                    <Animated.ScrollView
+                        ref={_scrollView}
+                        horizontal
+                        scrollEventThrottle
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.scrollView}
+                        pagingEnabled
+                        snapToInterval={CARD_WIDTH + 20}
+                        snapToAlignment='center'
+                        contentInset={{
+                            top: 0,
+                            left: SPACING_FOR_CARD_INSET,
+                            bottom: 0,
+                            right: SPACING_FOR_CARD_INSET
+                        }}
+                        contentContainerStyle={{
+                            paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
+                        }}
+                        onScroll={Animated.event(
+                            [
+                                {
+                                    nativeEvent: {
+                                        contentOffset: {
+                                            x: mapAnimation
+                                        }
+                                    },
+                                },
+                            ],
+                            { useNativeDriver: true }
+                        )}
+                    >
+                        {places.map((marker, index) => (
+                            <View style={styles.card} key={index}>
+                                <Image
+                                    source={{ uri: marker.image }}
+                                    style={styles.cardImage}
                                     resizeMode='cover'
                                 />
-                            </Animated.View>
-                        </Marker>
-                    )
-                })}
-            </MapView>
-            <TouchableOpacity style={styles.chipsItem} onPress={() => {navigation.navigate("Add Place")}}>
-                <MaterialIcons name="add" size={20} style={styles .chipsIcon}/>
-                <Text>Add a New Place</Text>
-            </TouchableOpacity>
-            <Animated.ScrollView
-                ref={_scrollView}
-                horizontal
-                scrollEventThrottle
-                showsHorizontalScrollIndicator={false}
-                style={styles.scrollView}
-                pagingEnabled
-                snapToInterval={CARD_WIDTH + 20}
-                snapToAlignment='center'
-                contentInset={{
-                    top: 0,
-                    left: SPACING_FOR_CARD_INSET,
-                    bottom: 0,
-                    right: SPACING_FOR_CARD_INSET
-                }}
-                contentContainerStyle={{
-                    paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
-                }}
-                onScroll={Animated.event(
-                    [
-                        {
-                            nativeEvent: {
-                                contentOffset: {
-                                    x: mapAnimation
-                                }
-                            },
-                        },
-                    ],
-                    { useNativeDriver: true }
-                )}
-            >
-                {state.markers.map((marker, index) => (
-                    <View style={styles.card} key={index}>
-                        <Image
-                            source={marker.image}
-                            style={styles.cardImage}
-                            resizeMode='cover'
-                        />
-                        <View style={styles.textContent}>
-                            <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
-                            <StarRating rating={marker.rating} />
-                            <Text numberOfLines={1} style={styles.cardDescription}>{marker.description}</Text>
-                            {/* <View style={styles.button}>
-                                <TouchableOpacity>
-                                    <Text>Gg</Text>
-                                </TouchableOpacity>
-                            </View> */}
-                        </View>
-                    </View>
-                ))}
-            </Animated.ScrollView>
-        </View>
+                                <View style={styles.textContent}>
+                                    <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
+                                    <StarRating rating={marker.rating} />
+                                    <Text numberOfLines={1} style={styles.cardDescription}>{marker.description}</Text>
+                                </View>
+                            </View>
+                        ))}
+                    </Animated.ScrollView>
+                </View>
+            );
+        }
+    }
+
+    return (
+        <RenderContent />
     );
 };
 
@@ -240,7 +300,7 @@ const styles = StyleSheet.create({
     },
     chipsItem: {
         position: "absolute",
-        top:15,
+        top: 15,
         flexDirection: "row",
         backgroundColor: '#fff',
         borderRadius: 20,
@@ -278,7 +338,7 @@ const styles = StyleSheet.create({
         height: CARD_HEIGHT - 45,
         width: CARD_WIDTH,
         overflow: "hidden",
-        marginBottom:50
+        marginBottom: 50
     },
     cardImage: {
         flex: 3,
@@ -323,5 +383,10 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 14,
         fontWeight: 'bold'
+    },
+    horizontal: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 10
     }
 });

@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     View, Text, StyleSheet, Alert,
-    Platform, ActivityIndicator, Image, TouchableOpacity
+    Platform, ActivityIndicator, Image,
+    TouchableOpacity, KeyboardAvoidingView,
+    ScrollView
 } from "react-native";
+import StarRating from "react-native-star-rating";
 import { TextInput, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -25,14 +28,29 @@ const AddPlaceScreen = ({ navigation }) => {
     const { user, logout } = React.useContext(AuthContext);
 
     const [data, setData] = React.useState({
+        title: '',
         street: "",
         number: "",
-        postCode: ""
+        postCode: "",
+        starCount: 3.5,
+        description: ''
     });
 
     const [image, setImage] = React.useState(null);
     const [uploading, setUploading] = React.useState(false);
     const [place, setPlace] = React.useState(null);
+
+    useEffect(() => {
+        getCoordinates('Greet House, off Frazier Street');
+    }, [])
+
+    ///Set star rating
+    const onStarRatingPress = (rating) => {
+        setData({
+            ...data,
+            starCount: rating
+        });
+    }
 
     ///Select Image from library
     const choosePhotoFromLibrary = async () => {
@@ -54,32 +72,37 @@ const AddPlaceScreen = ({ navigation }) => {
     ///// Get coordinates
     const getCoordinates = async () => {
         let fulladdress = data.street + " " + data.number + " " + data.postCode
-        console.log(fulladdress);
+        // console.log(fulladdress);
         Geocoder.from(fulladdress)
             .then(json => {
+                // console.log(json.results);
                 let location = json.results[0].geometry.location;
                 setPlace(location);
             })
-            .catch(error => console.warn(error));
-        console.log(place);
+            .catch(error => console.log(error));
+        // console.log(place);
     }
 
     ///Add a new place to our common FIRESTORE Database
     const submitPlace = async () => {
 
+        setUploading(true);
         getCoordinates();
 
         const imageUrl = await uploadImage();
-        console.log('Image Url: ', imageUrl);
+        // console.log('Image Url: ', imageUrl);
         let coordinates = place;
-        console.log(coordinates);
+        // console.log(coordinates);
 
         db.collection('places')
             .add({
                 userId: user.uid,
                 latitude: coordinates.lat,
                 longitude: coordinates.lng,
-                url: imageUrl
+                url: imageUrl,
+                title: data.title,
+                description: data.description,
+                rating: data.starCount
             })
             .then(() => {
                 console.log('Place Added!!!');
@@ -87,6 +110,8 @@ const AddPlaceScreen = ({ navigation }) => {
                     'Place published',
                     'Your place has been published succesfully!!!');
                 setPlace(null);
+                navigation.navigate('Explore');
+                setUploading(false);
             })
             .catch((error) => {
                 console.log('Something went wrong with added post to firestore.', error);
@@ -102,7 +127,6 @@ const AddPlaceScreen = ({ navigation }) => {
         }
         const uploadUri = image;
         let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-        setUploading(true);
 
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -118,14 +142,13 @@ const AddPlaceScreen = ({ navigation }) => {
             xhr.send(null);
         });
 
-        const ref = Firebase.storage().ref().child(filename);
+        const ref = Firebase.storage().ref('Places').child(filename);
         const snapshot = await ref.put(blob);
 
         blob.close();
 
         url = await snapshot.ref.getDownloadURL();
 
-        setUploading(false);
         setImage(null);
 
         return url;
@@ -133,47 +156,75 @@ const AddPlaceScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text_header}>Add a New Place</Text>
-            <View style={styles.footer}>
-                <Text style={styles.text1}>Enter the Address</Text>
-                <TextInput
-                    placeholder="Enter the street"
-                    mode='outlined'
-                    onChangeText={(val) => setData({ ...data, street: val })}
-                />
-                <View style={{ flexDirection: 'row' }}>
-                    <TextInput
-                        placeholder="Number"
-                        mode='outlined'
-                        style={{ padding: 1 }}
-                        onChangeText={(val) => setData({ ...data, number: val })}
-                    />
+            <ScrollView>
+                <Text style={styles.text_header}>Add a New Place</Text>
+                <View style={styles.footer}>
+                    <Text style={styles.text1}>Title</Text>
                     <TextInput
                         mode='outlined'
-                        placeholder='Postcode'
-                        style={{ padding: 1, borderRadius: 5 }}
-                        onChangeText={(val) => setData({ ...data, postCode: val })}
+                        onChangeText={(val) => setData({ ...data, title: val })}
                     />
-                    <TouchableOpacity>
-                        <View style={{ backgroundColor: '#9960fc', marginTop: 8, padding: 20, paddingRight: 40, paddingLeft: 35, borderRadius: 5 }}>
-                            <Text style={{ color: 'white' }}>Get Address</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.button}>
-                    <TouchableOpacity style={styles.signIn} onPress={choosePhotoFromLibrary}>
-                        <LinearGradient
-                            colors={['#a767f0', '#9960fc']}
-                            style={styles.signIn}
-                        >
-                            <Text style={[styles.textSign], {
-                                color: '#fff'
-                            }}>Upload an Image</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
+                    <Text style={styles.text1}>Enter the Address</Text>
+                    <TextInput
+                        placeholder="Enter the street"
+                        mode='outlined'
+                        onChangeText={(val) => setData({ ...data, street: val })}
+                    />
+                    <View style={{ flexDirection: 'row' }}>
+                        <TextInput
+                            placeholder="Number"
+                            mode='outlined'
+                            style={{ padding: 1 }}
+                            onChangeText={(val) => setData({ ...data, number: val })}
+                        />
+                        <TextInput
+                            mode='outlined'
+                            placeholder='Postcode'
+                            style={{ padding: 1, borderRadius: 5 }}
+                            onChangeText={(val) => setData({ ...data, postCode: val })}
+                        />
+                        <TouchableOpacity onPress={choosePhotoFromLibrary}>
+                            <View style={{ backgroundColor: '#9960fc', marginTop: 8, padding: 20, paddingRight: 33, paddingLeft: 33, borderRadius: 5 }}>
+                                <Text style={{ color: 'white' }}>Upload Image</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.text1}>Description</Text>
+                    <TextInput
+                        mode='outlined'
+                        onChangeText={(val) => setData({ ...data, description: val })}
+                        numberOfLines={4}
+                        multiline={true}
+                    />
+                    <Text style={styles.text1}>Rating</Text>
+                    <StarRating
+                        disabled={false}
+                        maxStars={5}
+                        rating={data.starCount}
+                        selectedStar={(rating) => onStarRatingPress(rating)}
+                        fullStarColor='#9960fc'
+                        starStyle={{ marginTop: 5 }}
+                    />
 
-                <View style={styles.button}>
+                    {uploading == false ?
+                        < View style={styles.button}>
+                            <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
+                                <LinearGradient
+                                    colors={['#a767f0', '#9960fc']}
+                                    style={styles.signIn}
+                                >
+                                    <Text style={[styles.textSign], {
+                                        color: '#fff'
+                                    }}>Add Place</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
+                        :
+                        <View>
+                            <ActivityIndicator size='large' color="#0000ff" />
+                        </View>
+                    }
+                    {/* <View style={styles.button}>
                     <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
                         <LinearGradient
                             colors={['#a767f0', '#9960fc']}
@@ -184,12 +235,13 @@ const AddPlaceScreen = ({ navigation }) => {
                             }}>Add Place</Text>
                         </LinearGradient>
                     </TouchableOpacity>
+                </View> */}
+                    {image == null ? <View></View>
+                        : <Image source={{ uri: image }}
+                            style={styles.thumbnail} />}
                 </View>
-                {image == null ? <View></View>
-                    : <Image source={{ uri: image }}
-                        style={styles.thumbnail} />}
-            </View>
-        </View>
+            </ScrollView>
+        </View >
     )
 }
 
@@ -205,12 +257,13 @@ const styles = StyleSheet.create({
     text1: {
         color: '#05375a',
         fontSize: 25,
-        fontWeight:'bold'
+        fontWeight: 'bold'
     },
     text_header: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 30
+        fontSize: 40,
+        marginLeft: 15
     },
     actionButtonIcon: {
         fontSize: 20,
@@ -221,9 +274,9 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         resizeMode: "contain",
-        justifyContent:'center',
-        borderRadius:4,
-        marginHorizontal:40
+        justifyContent: 'center',
+        borderRadius: 4,
+        marginHorizontal: 40
     },
     container: {
         flex: 1,
@@ -235,7 +288,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
-        paddingVertical: 30
+        paddingVertical: 10
     },
     button: {
         alignItems: 'center',

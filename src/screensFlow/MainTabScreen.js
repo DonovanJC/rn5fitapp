@@ -7,6 +7,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 import ExploreScreen from '../screens/ExploreScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import AddPlaceScreen from '../screens/AddPlaceScreen';
+import ExercisesList from '../screens/ExercisesListScreen';
+import CreateRoutine from '../screens/CreateRoutineScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const HomeStack = createStackNavigator();
@@ -71,6 +73,8 @@ const HomeStackScreen = ({ navigation }) => (
                 />
             )
         }} />
+        <HomeStack.Screen name='Exercises List' component={ExercisesList} options={{ title: '' }}/> 
+        <HomeStack.Screen name='Create Routine' component={CreateRoutine} options={{ title: '' }}/>
     </HomeStack.Navigator>
 );
 
@@ -91,7 +95,7 @@ const ExploreStackScreen = ({ navigation }) => (
                 />
             )
         }} />
-        <ExploreStack.Screen name="Add Place" component={AddPlaceScreen} options={{title:''}} />
+        <ExploreStack.Screen name="Add Place" component={AddPlaceScreen} options={{ title: '' }} />
     </ExploreStack.Navigator>
 );
 

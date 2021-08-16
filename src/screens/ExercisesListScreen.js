@@ -52,6 +52,7 @@ const ExercisesList = () => {
         }, [])
     );
 
+    
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
 

@@ -28,12 +28,12 @@ const AddPlaceScreen = ({ navigation }) => {
     const { user, logout } = React.useContext(AuthContext);
 
     const [data, setData] = React.useState({
-        title: '',
-        street: "",
-        number: "",
-        postCode: "",
+        title: null,
+        street: null,
+        number: null,
+        postCode: null,
         starCount: 3.5,
-        description: ''
+        description: null
     });
 
     const [image, setImage] = React.useState(null);
@@ -159,14 +159,14 @@ const AddPlaceScreen = ({ navigation }) => {
             <StatusBar backgroundColor='transparent' barStyle='dark-content' />
             <ScrollView>
                 <View style={styles.footer}>
-                    <Text style={styles.text1}>Title</Text>
+                    <Text style={styles.text1}>Title(*)</Text>
                     <TextInput
                         mode='outlined'
                         onChangeText={(val) => setData({ ...data, title: val })}
                     />
-                    <Text style={styles.text1}>Enter the Address</Text>
+                    <Text style={styles.text1}>Enter the Address(*)</Text>
                     <TextInput
-                        placeholder="Enter the street"
+                        placeholder="Enter the street(*)"
                         mode='outlined'
                         onChangeText={(val) => setData({ ...data, street: val })}
                     />
@@ -179,7 +179,7 @@ const AddPlaceScreen = ({ navigation }) => {
                         />
                         <TextInput
                             mode='outlined'
-                            placeholder='Postcode'
+                            placeholder='Postcode(*)'
                             style={{ padding: 1, borderRadius: 5 }}
                             onChangeText={(val) => setData({ ...data, postCode: val })}
                         />
@@ -189,7 +189,7 @@ const AddPlaceScreen = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.text1}>Description</Text>
+                    <Text style={styles.text1}>Description(*)</Text>
                     <TextInput
                         mode='outlined'
                         onChangeText={(val) => setData({ ...data, description: val })}
@@ -197,6 +197,7 @@ const AddPlaceScreen = ({ navigation }) => {
                         multiline={true}
                     />
                     <Text style={styles.text1}>Rating</Text>
+                    
                     <StarRating
                         disabled={false}
                         maxStars={5}
@@ -208,7 +209,11 @@ const AddPlaceScreen = ({ navigation }) => {
 
                     {uploading == false ?
                         < View style={styles.button}>
-                            <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
+                            <TouchableOpacity style={styles.signIn} onPress={() => {
+                                if (data.title && data.description && data.postCode && data.street && image) {
+                                    submitPlace();
+                                } else { Alert.alert('Wrong input fields','You must fill all required fields and upload an Image')}
+                            }}>
                                 <LinearGradient
                                     colors={['#6e45e6', '#5c2de3']}
                                     style={styles.signIn}
@@ -281,15 +286,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        marginTop:100
     },
     footer: {
-        flex: 3,
         backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        paddingHorizontal: 20,
-        paddingVertical: 10
+        paddingHorizontal: 25,
+        marginTop: 90
     },
     button: {
         alignItems: 'center',

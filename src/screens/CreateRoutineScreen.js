@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StatusBar } from 'react-native';
 
 const CreateRoutine = () => {
-    return(
+    return (
         <View>
+            <StatusBar backgroundColor='transparent' barStyle='dark-content' />
             <Text>Toma esta</Text>
         </View>
     )

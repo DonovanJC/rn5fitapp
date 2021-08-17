@@ -3,7 +3,7 @@ import {
     View, Text, StyleSheet, Alert,
     Platform, ActivityIndicator, Image,
     TouchableOpacity, KeyboardAvoidingView,
-    ScrollView
+    ScrollView, StatusBar
 } from "react-native";
 import StarRating from "react-native-star-rating";
 import { TextInput, Button } from "react-native-paper";
@@ -156,8 +156,8 @@ const AddPlaceScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <StatusBar backgroundColor='transparent' barStyle='dark-content' />
             <ScrollView>
-                <Text style={styles.text_header}>Add a New Place</Text>
                 <View style={styles.footer}>
                     <Text style={styles.text1}>Title</Text>
                     <TextInput
@@ -184,7 +184,7 @@ const AddPlaceScreen = ({ navigation }) => {
                             onChangeText={(val) => setData({ ...data, postCode: val })}
                         />
                         <TouchableOpacity onPress={choosePhotoFromLibrary}>
-                            <View style={{ backgroundColor: '#9960fc', marginTop: 8, padding: 20, paddingRight: 33, paddingLeft: 33, borderRadius: 5 }}>
+                            <View style={{ backgroundColor: '#6e45e6', marginTop: 8, padding: 20, paddingRight: 33, paddingLeft: 33, borderRadius: 5 }}>
                                 <Text style={{ color: 'white' }}>Upload Image</Text>
                             </View>
                         </TouchableOpacity>
@@ -210,7 +210,7 @@ const AddPlaceScreen = ({ navigation }) => {
                         < View style={styles.button}>
                             <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
                                 <LinearGradient
-                                    colors={['#a767f0', '#9960fc']}
+                                    colors={['#6e45e6', '#5c2de3']}
                                     style={styles.signIn}
                                 >
                                     <Text style={[styles.textSign], {
@@ -280,11 +280,12 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#aa80ff'
+        backgroundColor: 'white',
+        marginTop:100
     },
     footer: {
         flex: 3,
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 20,

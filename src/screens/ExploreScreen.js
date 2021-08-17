@@ -4,12 +4,12 @@ import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import {
     View, Text, StyleSheet, TextInput, Dimensions,
     Platform, TouchableOpacity, Image, Animated, ScrollView,
-    ActivityIndicator
+    ActivityIndicator, StatusBar
 } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-// import { markers } from '../model/mapdata';
+import { markers } from '../model/mapdata';
 import StarRating from '../components/StarRating';
 import Firebase from "../database/firebase";
 
@@ -31,7 +31,7 @@ const ExploreScreen = ({ navigation }) => {
     }
     const [isLoading, setLoading] = React.useState(true);
     const [region, setRegion] = React.useState(initialMapState.region);
-    const [places, setPlaces] = React.useState(null);
+    const [places, setPlaces] = React.useState(markers);
 
     const fetchPosts = async () => {
         try {
@@ -143,14 +143,15 @@ const ExploreScreen = ({ navigation }) => {
         if (isLoading) {
             return (
                 <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size='large' color="#0000ff"/>
+                    <StatusBar translucent={true} backgroundColor='white' barStyle='dark-content' />
+                    <ActivityIndicator size='large' color="#0000ff" />
                 </View>
             );
         }
         else {
             return (
                 <View style={styles.container}>
-
+                    <StatusBar translucent={true} backgroundColor='white' barStyle='dark-content' />
                     <MapView
                         ref={_map}
                         initialRegion={region}
@@ -274,6 +275,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        backgroundColor:'white'
     },
     searchBox: {
         position: 'absolute',
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
     },
     chipsItem: {
         position: "absolute",
-        top: 15,
+        top: 100,
         flexDirection: "row",
         backgroundColor: '#fff',
         borderRadius: 20,

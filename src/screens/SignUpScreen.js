@@ -76,7 +76,7 @@ const SignUpScreen = ({ navigation }) => {
     const handleValidEmail = (val) => {
         console.log(val);
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        check = re.test(String(val.trim()).toLowerCase());
+        const check = re.test(String(val.trim()).toLowerCase());
         console.log(check);
         if (check) {
             setData({
@@ -130,7 +130,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#aa80ff' barStyle='light-content' />
+            <StatusBar backgroundColor='#6e45e6' barStyle='light-content' />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Register Now!</Text>
                 <Text>Please Create your account</Text>
@@ -260,7 +260,7 @@ const SignUpScreen = ({ navigation }) => {
                         }}
                     >
                         <LinearGradient
-                            colors={['#a767f0', '#9960fc']}
+                            colors={['#6e45e6', '#5c2de3']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign], {
@@ -272,13 +272,13 @@ const SignUpScreen = ({ navigation }) => {
                     <TouchableOpacity
                         onPress={() => navigation.navigate('SignIn')}
                         style={[styles.signIn, {
-                            borderColor: '#aa80ff',
+                            borderColor: '#6e45e6',
                             borderWidth: 1,
                             marginTop: 15
                         }]}
                     >
                         <Text style={[styles.textSign, {
-                            color: '#aa80ff'
+                            color: '#6e45e6'
                         }]}>Sign In</Text>
                     </TouchableOpacity>
                 </View>
@@ -292,7 +292,7 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#aa80ff'
+        backgroundColor: '#6e45e6'
     },
     header: {
         flex: 1,

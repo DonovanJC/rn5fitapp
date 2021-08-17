@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, StatusBar } from "react-native";
-const ProfileScreen = ({ navigation }) => {
+const ProgressScreen = ({ navigation }) => {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <StatusBar backgroundColor='transparent' barStyle='dark-content' />
-            <Text>Profile Screen</Text>
+            <Text>Progress Screen</Text>
         </View>
     );
 };
 
-export default ProfileScreen;
+export default ProgressScreen;

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, StatusBar } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from 'react-native-animatable';
@@ -7,6 +7,7 @@ import * as Animatable from 'react-native-animatable';
 const SplashScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
+            <StatusBar backgroundColor='#6e45e6' barStyle='light-content' />
             <View style={styles.header}>
                 <Animatable.Image
                     animation='bounceIn'
@@ -16,16 +17,16 @@ const SplashScreen = ({ navigation }) => {
                     resizeMode='stretch'
                 />
             </View>
-            <Animatable.View 
-            style={styles.footer}
-            animation='fadeInUpBig'
+            <Animatable.View
+                style={styles.footer}
+                animation='fadeInUpBig'
             >
                 <Text style={styles.title}>Stay Connected with everyone!!</Text>
                 <Text style={styles.text}>Sign in with account</Text>
                 <View style={styles.button}>
                     <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                         <LinearGradient
-                            colors={['#a767f0', '#9960fc']}
+                            colors={['#6e45e6', '#5c2de3']}
                             style={styles.signIn}
                         >
                             <Text style={styles.textSign}>Get Started</Text>
@@ -46,7 +47,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#aa80ff'
+        backgroundColor: '#6e45e6'
     },
     header: {
         flex: 2,

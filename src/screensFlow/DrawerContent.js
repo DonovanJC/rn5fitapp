@@ -9,13 +9,13 @@ import {
     DrawerItem
 } from '@react-navigation/drawer'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { color } from 'react-native-reanimated';
-
+import { MaterialIcons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 import { AuthContext } from '../navigation/AuthProvider';
 
 export function DrawerContent(props) {
 
-    const {user, logout} = React.useContext(AuthContext)
+    const { user, logout } = React.useContext(AuthContext)
 
     const [isDarkTheme, setisDarkTheme] = React.useState(false);
 
@@ -41,75 +41,70 @@ export function DrawerContent(props) {
                                 <Caption styles={styles.caption}>User ID</Caption>
                             </View>
                         </View>
-                        <View style={styles.row}>
-                            <View style={styles.section}>
-                                <Paragraph style={[styles.paragraph, styles.caption]}>80</Paragraph>
-                                <Caption style={styles.caption}>Following</Caption>
-                            </View>
-                            <View style={styles.section}>
-                                <Paragraph style={[styles.paragraph, styles.caption]}>100</Paragraph>
-                                <Caption style={styles.caption}>Followers</Caption>
-                            </View>
-                        </View>
                     </View>
                     <Drawer.Section style={styles.drawerSection}>
                         <DrawerItem
                             icon={({ color, size }) => (
                                 <MaterialCommunityIcons
                                     name='home-outline'
-                                    color={color}
+                                    color={'#6e45e6'}
                                     size={size} />
                             )}
                             label='Home'
-                            onPress={() => {props.navigation.navigate('Home')}}
+                            onPress={() => { props.navigation.navigate('Home') }}
+                            style={{ marginTop: 10 }}
+                        />
+                        <DrawerItem
+                            icon={({ color, size }) => (
+                                <MaterialIcons
+                                    name='park'
+                                    color={'#6e45e6'}
+                                    size={size} />
+                            )}
+                            label='Explore'
+                            onPress={() => { props.navigation.navigate('Explore') }}
+                            style={{ marginTop: 10 }}
                         />
                         <DrawerItem
                             icon={({ color, size }) => (
                                 <MaterialCommunityIcons
                                     name='account-outline'
-                                    color={color}
+                                    color={'#6e45e6'}
                                     size={size} />
                             )}
                             label='Profile'
-                            onPress={() => {props.navigation.navigate('Profile')}}
-                        />
-                        <DrawerItem
-                            icon={({ color, size }) => (
-                                <MaterialCommunityIcons
-                                    name='bookmark-outline'
-                                    color={color}
-                                    size={size} />
-                            )}
-                            label='Bookmarks'
-                            onPress={() => {props.navigation.navigate('Bookmark')}}
+                            onPress={() => { props.navigation.navigate('Profile') }}
+                            style={{ marginTop: 10 }}
                         />
                         <DrawerItem
                             icon={({ color, size }) => (
                                 <MaterialCommunityIcons
                                     name='eye-settings-outline'
-                                    color={color}
+                                    color={'#6e45e6'}
                                     size={size} />
                             )}
-                            label='Settings'
-                            onPress={() => {props.navigation.navigate('Settings')}}
+                            label='BMI | BMR Calculator'
+                            onPress={() => { props.navigation.navigate('Calculator') }}
+                            style={{ marginTop: 10 }}
                         />
                         <DrawerItem
                             icon={({ color, size }) => (
-                                <MaterialCommunityIcons
-                                    name='account-check-outline'
-                                    color={color}
+                                <SimpleLineIcons
+                                    name='calculator'
+                                    color={'#6e45e6'}
                                     size={size} />
                             )}
-                            label='Support'
-                            onPress={() => {props.navigation.navigate('Support')}}
+                            label='Progress'
+                            onPress={() => { props.navigation.navigate('Progress') }}
+                            style={{ marginTop: 10 }}
                         />
                     </Drawer.Section>
-                    <Drawer.Section title='Preferences'>
+                    <Drawer.Section title='Preferences' style={{ marginTop: 15, borderColor:'#6e45e6' }}>
                         <TouchableRipple onPress={() => { toggleTheme() }}>
                             <View style={styles.preference}>
-                                <Text>Dark Theme</Text>
+                                <Text style={{color:'#6e45e6'}}>Dark Theme</Text>
                                 <View pointerEvents='none'>
-                                    <Switch value={isDarkTheme} />
+                                    <Switch value={isDarkTheme} color='#6e45e6' />
                                 </View>
                             </View>
                         </TouchableRipple>
@@ -121,7 +116,7 @@ export function DrawerContent(props) {
                     icon={({ color, size }) => (
                         <MaterialCommunityIcons
                             name='exit-to-app'
-                            color={color}
+                            color='#6e45e6'
                             size={size} />
                     )}
                     label='Sign Out'
@@ -159,17 +154,19 @@ const styles = StyleSheet.create({
         marginRight: 3
     },
     drawerSection: {
-        marginTop: 15
+        marginTop: 20,
+        borderTopColor: '#f4f4f4',
+        borderTopWidth: 1,
     },
     bottomDrawerSection: {
-        marginBottom: 15,
+        marginBottom: 25,
         borderTopColor: '#f4f4f4',
         borderTopWidth: 1
     },
     preference: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 12,
+        paddingVertical: 18,
         paddingHorizontal: 16
     }
 });

@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const routines = {}
     return (
         <AuthContext.Provider
             value={{
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 register: async (email, password) => {
                     try {
-                        await auth.createUserWithEmailAndPassword(email, password);
+                        await auth.createUserWithEmailAndPassword(email, password,routines);
                     } catch (e) {
                         console.log(e);
                     }

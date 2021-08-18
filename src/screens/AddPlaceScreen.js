@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import {
     View, Text, StyleSheet, Alert,
     Platform, ActivityIndicator, Image,
-    TouchableOpacity, KeyboardAvoidingView,
-    ScrollView, StatusBar
+    TouchableOpacity,
+    ScrollView, StatusBar, Keyboard, TouchableWithoutFeedback
 } from "react-native";
 import StarRating from "react-native-star-rating";
 import { TextInput, Button } from "react-native-paper";
@@ -13,7 +13,7 @@ import Firebase from "../database/firebase";
 import Geocoder from "react-native-geocoding";
 // import ImagePicker from 'react-native-image-crop-picker';
 import ActionButton from 'react-native-action-button';
-import { Ionicons } from '@expo/vector-icons/Ionicons'
+import { Ionicons } from '@expo/vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -155,81 +155,82 @@ const AddPlaceScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor='transparent' barStyle='dark-content' />
-            <ScrollView>
-                <View style={styles.footer}>
-                    <Text style={styles.text1}>Title(*)</Text>
-                    <TextInput
-                        mode='outlined'
-                        onChangeText={(val) => setData({ ...data, title: val })}
-                    />
-                    <Text style={styles.text1}>Enter the Address(*)</Text>
-                    <TextInput
-                        placeholder="Enter the street(*)"
-                        mode='outlined'
-                        onChangeText={(val) => setData({ ...data, street: val })}
-                    />
-                    <View style={{ flexDirection: 'row' }}>
-                        <TextInput
-                            placeholder="Number"
-                            mode='outlined'
-                            style={{ padding: 1 }}
-                            onChangeText={(val) => setData({ ...data, number: val })}
-                        />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.container}>
+                <StatusBar backgroundColor='transparent' barStyle='dark-content' />
+                <ScrollView>
+                    <View style={styles.footer}>
+                        <Text style={styles.text1}>Title(*)</Text>
                         <TextInput
                             mode='outlined'
-                            placeholder='Postcode(*)'
-                            style={{ padding: 1, borderRadius: 5 }}
-                            onChangeText={(val) => setData({ ...data, postCode: val })}
+                            onChangeText={(val) => setData({ ...data, title: val })}
                         />
-                        <TouchableOpacity onPress={choosePhotoFromLibrary}>
-                            <View style={{ backgroundColor: '#6e45e6', marginTop: 8, padding: 20, paddingRight: 33, paddingLeft: 33, borderRadius: 5 }}>
-                                <Text style={{ color: 'white' }}>Upload Image</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.text1}>Description(*)</Text>
-                    <TextInput
-                        mode='outlined'
-                        onChangeText={(val) => setData({ ...data, description: val })}
-                        numberOfLines={4}
-                        multiline={true}
-                    />
-                    <Text style={styles.text1}>Rating</Text>
-                    
-                    <StarRating
-                        disabled={false}
-                        maxStars={5}
-                        rating={data.starCount}
-                        selectedStar={(rating) => onStarRatingPress(rating)}
-                        fullStarColor='#9960fc'
-                        starStyle={{ marginTop: 5 }}
-                    />
-
-                    {uploading == false ?
-                        < View style={styles.button}>
-                            <TouchableOpacity style={styles.signIn} onPress={() => {
-                                if (data.title && data.description && data.postCode && data.street && image) {
-                                    submitPlace();
-                                } else { Alert.alert('Wrong input fields','You must fill all required fields and upload an Image')}
-                            }}>
-                                <LinearGradient
-                                    colors={['#6e45e6', '#5c2de3']}
-                                    style={styles.signIn}
-                                >
-                                    <Text style={[styles.textSign], {
-                                        color: '#fff'
-                                    }}>Add Place</Text>
-                                </LinearGradient>
+                        <Text style={styles.text1}>Enter the Address(*)</Text>
+                        <TextInput
+                            placeholder="Enter the street(*)"
+                            mode='outlined'
+                            onChangeText={(val) => setData({ ...data, street: val })}
+                        />
+                        <View style={{ flexDirection: 'row' }}>
+                            <TextInput
+                                placeholder="Number"
+                                mode='outlined'
+                                style={{ padding: 1 }}
+                                onChangeText={(val) => setData({ ...data, number: val })}
+                            />
+                            <TextInput
+                                mode='outlined'
+                                placeholder='Postcode(*)'
+                                style={{ padding: 1, borderRadius: 5 }}
+                                onChangeText={(val) => setData({ ...data, postCode: val })}
+                            />
+                            <TouchableOpacity onPress={choosePhotoFromLibrary}>
+                                <View style={{ backgroundColor: '#6e45e6', marginTop: 8, padding: 20, paddingRight: 33, paddingLeft: 33, borderRadius: 5 }}>
+                                    <Text style={{ color: 'white' }}>Upload Image</Text>
+                                </View>
                             </TouchableOpacity>
                         </View>
-                        :
-                        <View>
-                            <ActivityIndicator size='large' color="#0000ff" />
-                        </View>
-                    }
-                    {/* <View style={styles.button}>
+                        <Text style={styles.text1}>Description(*)</Text>
+                        <TextInput
+                            mode='outlined'
+                            onChangeText={(val) => setData({ ...data, description: val })}
+                            numberOfLines={4}
+                            multiline={true}
+                        />
+                        <Text style={styles.text1}>Rating</Text>
+
+                        <StarRating
+                            disabled={false}
+                            maxStars={5}
+                            rating={data.starCount}
+                            selectedStar={(rating) => onStarRatingPress(rating)}
+                            fullStarColor='#9960fc'
+                            starStyle={{ marginTop: 5 }}
+                        />
+
+                        {uploading == false ?
+                            < View style={styles.button}>
+                                <TouchableOpacity style={styles.signIn} onPress={() => {
+                                    if (data.title && data.description && data.postCode && data.street && image) {
+                                        submitPlace();
+                                    } else { Alert.alert('Wrong input fields', 'You must fill all required fields and upload an Image') }
+                                }}>
+                                    <LinearGradient
+                                        colors={['#6e45e6', '#5c2de3']}
+                                        style={styles.signIn}
+                                    >
+                                        <Text style={[styles.textSign], {
+                                            color: '#fff'
+                                        }}>Add Place</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View>
+                                <ActivityIndicator size='large' color="#0000ff" />
+                            </View>
+                        }
+                        {/* <View style={styles.button}>
                     <TouchableOpacity style={styles.signIn} onPress={submitPlace}>
                         <LinearGradient
                             colors={['#a767f0', '#9960fc']}
@@ -241,12 +242,13 @@ const AddPlaceScreen = ({ navigation }) => {
                         </LinearGradient>
                     </TouchableOpacity>
                 </View> */}
-                    {image == null ? <View></View>
-                        : <Image source={{ uri: image }}
-                            style={styles.thumbnail} />}
-                </View>
-            </ScrollView>
-        </View >
+                        {image == null ? <View></View>
+                            : <Image source={{ uri: image }}
+                                style={styles.thumbnail} />}
+                    </View>
+                </ScrollView>
+            </View >
+        </TouchableWithoutFeedback>
     )
 }
 

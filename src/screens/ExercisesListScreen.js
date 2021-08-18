@@ -4,8 +4,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { List, Modal, DefaultTheme } from 'react-native-paper';
 import {
     View, Text, ActivityIndicator, ScrollView,
-    StyleSheet, FlatList, TouchableOpacity, Image, LogBox, StatusBar
+    StyleSheet, FlatList, Image, LogBox, StatusBar
 } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
 
 import Firebase from '../database/firebase';
 const db = Firebase.firestore();
@@ -101,7 +102,9 @@ const ExercisesList = () => {
         return (
             <>
                 <View style={{ borderLeftWidth: 2, borderRightWidth: 2, borderBottomWidth: 1, borderTopWidth: 1, borderRadius: 3, borderColor: '#6e45e6' }}>
-                    <List.Item title={item.title} left={props => <Image style={styles.tinyLogo} source={{ uri: item.image }} />} onPress={() => { showModal(); setSelectedItem(item) }} />
+                    <List.Item title={item.title} 
+                    left={() => <Image style={styles.tinyLogo} source={{ uri: item.image }} />} onPress={() => { showModal(); setSelectedItem(item) }}
+                    />
                 </View>
             </>
         )
@@ -190,7 +193,7 @@ const ExercisesList = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     modal: {
         backgroundColor: 'white',

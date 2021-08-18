@@ -18,7 +18,7 @@ const ProfileStack = createStackNavigator();
 
 const MainTabScreen = () => (
     <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Feed"
         activeColor='white'
         barStyle={{ backgroundColor: '#6e45e6' }}
         shifting={true}
@@ -61,7 +61,7 @@ export default MainTabScreen;
 const HomeStackScreen = ({ navigation }) => (
     <HomeStack.Navigator screenOptions={{
         headerStyle: {
-            backgroundColor: 'white'
+            backgroundColor: 'white',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -70,7 +70,7 @@ const HomeStackScreen = ({ navigation }) => (
     }}>
         <HomeStack.Screen name='Home' component={HomeScreen} options={{
             headerTintColor: '#6e45e6',
-            headerTransparent: true,
+            headerTransparent:true,
             headerLeft: () => (
                 <Ionicons.Button name='ios-menu' size={45} color='#6e45e6'
                     backgroundColor='transparent' underlayColor='transparent' onPress={() => { navigation.openDrawer() }}

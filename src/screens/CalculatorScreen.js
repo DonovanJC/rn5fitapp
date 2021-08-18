@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, StatusBar } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 
 const CalculatorScreen = ({ navigation }) => {
     [height, setHeight] = React.useState(null);
@@ -8,6 +9,7 @@ const CalculatorScreen = ({ navigation }) => {
     [bmiResult, setBmiResult] = React.useState('');
     [age, setAge] = React.useState(null);
     [bmrResult, setBmrResult] = React.useState('');
+    [gender, setGender] = React.useState('Male')
 
     const handleHeight = (text) => {
         setHeight(text);
@@ -72,6 +74,20 @@ const CalculatorScreen = ({ navigation }) => {
                         placeholder="Age"
                         autoCapitalize="none"
                         onChangeText={handleAge} />
+                    <View >
+                        <Text style={styles.label}>Gender</Text>
+                        <View style={{borderWidth:1, width:150, marginLeft:15, marginTop:10}}>
+                            <Picker
+                                style={{ width: 150, marginLeft: 8, borderWidth: 3, paddingTop: 40 }}
+                                selectedValue={gender}
+                                onValueChange={(itemValue, itemIndex) =>
+                                    setGender(itemValue)
+                                }>
+                                <Picker.Item label="Male" value="Male" />
+                                <Picker.Item label="Female" value="Female" />
+                            </Picker>
+                        </View>
+                    </View>
                     <TouchableOpacity
                         style={styles.submitButton}
                         onPress={
@@ -104,9 +120,9 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         backgroundColor: '#6e45e6',
-        padding: 10,
+        padding: 20,
         margin: 15,
-        height: 40,
+        borderRadius:20
     },
     submitButtonText: {
         textAlign: "center",
@@ -139,5 +155,6 @@ const styles = StyleSheet.create({
     },
     label: {
         marginLeft: 15,
+        fontWeight: 'bold'
     }
 })

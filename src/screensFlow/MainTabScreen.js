@@ -10,6 +10,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import AddPlaceScreen from '../screens/AddPlaceScreen';
 import ExercisesList from '../screens/ExercisesListScreen';
 import CreateRoutine from '../screens/CreateRoutineScreen';
+import RoutinesScreen from '../screens/RoutinesScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const HomeStack = createStackNavigator();
@@ -24,7 +25,7 @@ const MainTabScreen = () => (
         shifting={true}
     >
         <Tab.Screen
-            name="Home"
+            name="Homeee"
             component={HomeStackScreen}
             options={{
                 tabBarLabel: 'Home',
@@ -34,7 +35,7 @@ const MainTabScreen = () => (
             }}
         />
         <Tab.Screen
-            name="Explore"
+            name="Exploreee"
             component={ExploreStackScreen}
             options={{
                 tabBarLabel: 'Explore',
@@ -44,7 +45,7 @@ const MainTabScreen = () => (
             }}
         />
         <Tab.Screen
-            name="Profile"
+            name="Profileee"
             component={ProfileStackScreen}
             options={{
                 tabBarLabel: 'Profile',
@@ -79,6 +80,7 @@ const HomeStackScreen = ({ navigation }) => (
         }} />
         <HomeStack.Screen name='Exercises List' component={ExercisesList} options={{ title: '', headerTintColor: '#6e45e6' }} />
         <HomeStack.Screen name='Create Routine' component={CreateRoutine} options={{ title: '', headerTintColor: '#6e45e6' }} />
+        <HomeStack.Screen name='My Routines' component={RoutinesScreen} options={{ title: '', headerTintColor: '#6e45e6' }} />
     </HomeStack.Navigator>
 );
 

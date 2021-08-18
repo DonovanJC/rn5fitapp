@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StatusBar, Dimensions } from "react-native";
+import { AuthContext } from "../navigation/AuthProvider";
 // import { LineChart } from "react-native-chart-kit";
 
 const screenWidth = Dimensions.get("window").width;
@@ -26,6 +27,7 @@ const data = {
 };
 
 const ProgressScreen = ({ navigation }) => {
+
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <StatusBar backgroundColor='transparent' barStyle='dark-content' />

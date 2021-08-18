@@ -3,12 +3,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import {
     View, Text, StatusBar, StyleSheet, Keyboard,
     TouchableWithoutFeedback, FlatList, Image,
-    LogBox, ActivityIndicator, ScrollView, TouchableOpacity
+    LogBox, ActivityIndicator, ScrollView, TouchableOpacity, Alert
 } from 'react-native';
 import { List, Modal, DefaultTheme, TextInput } from 'react-native-paper';
 import { Entypo } from '@expo/vector-icons';
 import Firebase from '../database/firebase';
+import { AuthContext } from '../navigation/AuthProvider';
 const db = Firebase.firestore();
+
 const theme = {
     ...DefaultTheme,
     roundness: 8,
@@ -32,7 +34,8 @@ const theme2 = {
     },
 };
 
-const CreateRoutine = () => {
+const CreateRoutine = ({navigation}) => {
+    const { user } = React.useContext(AuthContext)
     const [isLoading, setLoading] = React.useState(true);
     const [visible, setVisible] = React.useState(false);
     const [selectedItem, setSelectedItem] = React.useState(null);
@@ -87,6 +90,24 @@ const CreateRoutine = () => {
         }
     };
 
+    const submitRoutine = async () => {
+        await db.collection('routines')
+            .add({
+                title: title,
+                routine: routine,
+                userId: user.uid
+            })
+            .then(() => {
+                setRoutine([]);
+                setTitle(null);
+                Alert.alert('Routine succesfully created!');
+                navigation.navigate('Home');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             setLoading(true);
@@ -97,6 +118,14 @@ const CreateRoutine = () => {
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
 
+    const addExercise = (item) => {
+        let check = routine.find(each => each.title === item.title);
+        if (!check) {
+            setRoutine([...routine, item]);
+        }
+        else { null; }
+    }
+
     const renderItem = ({ item }) => {
         return (
             <>
@@ -105,7 +134,7 @@ const CreateRoutine = () => {
                         left={() => <Image style={styles.tinyLogo} source={{ uri: item.image }} />} onPress={() => { showModal(); setSelectedItem(item) }}
                         right={() =>
                             <Entypo.Button name='add-to-list' iconStyle={{ marginLeft: 10, marginTop: 8 }} color='white' backgroundColor='#3700b3' size={25} borderRadius={6}
-                                onPress={() => setRoutine([...routine, item])}
+                                onPress={() => addExercise(item)}
                                 style={{ padding: 3 }} />
                         } />
                 </View>
@@ -118,19 +147,17 @@ const CreateRoutine = () => {
             <View style={styles.container}>
                 <StatusBar backgroundColor='transparent' barStyle='dark-content' />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                    <TextInput placeholder='Title' mode='outlined' style={{ marginBottom: 10, flex: 1, marginLeft: 10, marginRight: 5 }} onChangeText={(val) => setTitle(val)} />
-                    {title == null || title == '' ?
+                    <TextInput placeholder='Add a Title' mode='outlined' style={{ marginBottom: 10, flex: 1, marginLeft: 10, marginRight: 5 }} onChangeText={(val) => setTitle(val)} />
+                    {title == null || title == '' || routine.length == 0 ?
                         null
                         :
-                        <TouchableOpacity onPress={() => console.log('sapeeeee!!!')}>
+                        <TouchableOpacity onPress={() => submitRoutine()}>
                             <View style={{ backgroundColor: '#3700b3', marginHorizontal: 5, padding: 20, borderRadius: 10, marginTop: 5 }}>
-                                <Text style={{ color: 'white' }}>Add Place mijito</Text>
+                                <Text style={{ color: 'white' }}>Create Routine</Text>
                             </View>
                         </TouchableOpacity>
                     }
                 </View>
-                {console.log(title)}
-                {console.log('Ahhh:', routine)}
                 {isLoading ?
                     <View >
                         <StatusBar backgroundColor='transparent' barStyle='dark-content' />

@@ -6,7 +6,8 @@ import {
     View, Text, ActivityIndicator, ScrollView,
     StyleSheet, FlatList, Image, LogBox, StatusBar
 } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
+
+import { AuthContext } from '../navigation/AuthProvider';
 
 import Firebase from '../database/firebase';
 const db = Firebase.firestore();
@@ -34,65 +35,69 @@ const theme2 = {
 };
 
 const ExercisesList = () => {
-    const [isLoading, setLoading] = React.useState(true);
+    const { isLoading } = React.useContext(AuthContext);
+    const { exercises } = React.useContext(AuthContext);
+    const { fetchExercises } = React.useContext(AuthContext)
+    // const [isLoading, setLoading] = React.useState(true);
     const [visible, setVisible] = React.useState(false);
     const [selectedItem, setSelectedItem] = React.useState(null);
-    const [exercises, setExercises] = React.useState({
-        chest: null, triceps: null, shoulder: null,
-        legs: null, glutes: null, abs: null, back: null, biceps: null
-    });
+    // const [exercises, setExercises] = React.useState({
+    //     chest: null, triceps: null, shoulder: null,
+    //     legs: null, glutes: null, abs: null, back: null, biceps: null
+    // });
 
     useEffect(() => {
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+        fetchExercises();
     }, [])
 
 
-    const fetchExercises = async () => {
-        try {
-            const list = [];
+    // const fetchExercises = async () => {
+    //     try {
+    //         const list = [];
 
-            await db.
-                collection('exercises')
-                .get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const { title, description, level,
-                            muscles, image } = doc.data();
-                        const id = doc.id;
-                        list.push({
-                            title,
-                            description,
-                            image,
-                            level,
-                            muscles,
-                            id
-                        })
-                    })
-                    let chest = [], triceps = [], biceps = [], shoulder = [], glutes = [], back = [], abs = [], legs = []
-                    list.map(function (exercise) {
-                        if (exercise.muscles.includes('Chest')) chest.push(exercise);
-                        if (exercise.muscles.includes('Shoulder')) shoulder.push(exercise);
-                        if (exercise.muscles.includes('Triceps')) triceps.push(exercise);
-                        if (exercise.muscles.includes('Biceps')) biceps.push(exercise);
-                        if (exercise.muscles.includes('Glutes')) glutes.push(exercise);
-                        if (exercise.muscles.includes('Back')) back.push(exercise);
-                        if (exercise.muscles.includes('Abs')) abs.push(exercise);
-                        if (exercise.muscles.includes('Legs')) legs.push(exercise);
-                    });
-                    setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
-                    setLoading(false);
-                })
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    //         await db.
+    //             collection('exercises')
+    //             .get()
+    //             .then((querySnapshot) => {
+    //                 querySnapshot.forEach((doc) => {
+    //                     const { title, description, level,
+    //                         muscles, image } = doc.data();
+    //                     const id = doc.id;
+    //                     list.push({
+    //                         title,
+    //                         description,
+    //                         image,
+    //                         level,
+    //                         muscles,
+    //                         id
+    //                     })
+    //                 })
+    //                 let chest = [], triceps = [], biceps = [], shoulder = [], glutes = [], back = [], abs = [], legs = []
+    //                 list.map(function (exercise) {
+    //                     if (exercise.muscles.includes('Chest')) chest.push(exercise);
+    //                     if (exercise.muscles.includes('Shoulder')) shoulder.push(exercise);
+    //                     if (exercise.muscles.includes('Triceps')) triceps.push(exercise);
+    //                     if (exercise.muscles.includes('Biceps')) biceps.push(exercise);
+    //                     if (exercise.muscles.includes('Glutes')) glutes.push(exercise);
+    //                     if (exercise.muscles.includes('Back')) back.push(exercise);
+    //                     if (exercise.muscles.includes('Abs')) abs.push(exercise);
+    //                     if (exercise.muscles.includes('Legs')) legs.push(exercise);
+    //                 });
+    //                 setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
+    //                 setLoading(false);
+    //             })
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            setLoading(true);
-            fetchExercises();
-        }, [])
-    );
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         setLoading(true);
+    //         fetchExercises();
+    //     }, [])
+    // );
 
 
     const showModal = () => setVisible(true);

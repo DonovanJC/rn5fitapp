@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Button, View, Text, TouchableOpacity, StyleSheet, StatusBar, Alert } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { AuthContext } from "../navigation/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,27 +8,39 @@ import Firebase from "../database/firebase";
 
 const db = Firebase.firestore();
 
-const getFood = async () => {
-    try {
-        const response = await fetch(
-            'https://trackapi.nutritionix.com/v2/search/instant?query=rice',
-            {
-                headers: {
-                    "x-app-id": "9cff23e8",
-                    "x-app-key": "7a99a3c231be486fbe32cfdd0b96584a"
-                },
-            });
-        const json = await response.json();
-        console.log(json.common);
-    } catch (e) {
-        console.log(e);
-    }
-}
+// const getFood = async () => {
+//     try {
+//         const response = await fetch(
+//             'https://trackapi.nutritionix.com/v2/search/instant?query=rice',
+//             {
+//                 headers: {
+//                     "x-app-id": "9cff23e8",
+//                     "x-app-key": "7a99a3c231be486fbe32cfdd0b96584a"
+//                 },
+//             });
+//         const json = await response.json();
+//         console.log(json.common);
+//     } catch (e) {
+//         console.log(e);
+//     }
+// }
+
+
 
 const HomeScreen = ({ navigation }) => {
-    const { user } = React.useContext(AuthContext)
+    const { routines } = React.useContext(AuthContext);
+    const { user } = React.useContext(AuthContext);
+    const { checkRoutines } = React.useContext(AuthContext);
+    const { fetchRoutines } = React.useContext(AuthContext);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchRoutines();
+        }, [])
+    );
+
     return (
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 10, backgroundColor: 'white', paddingTop:50 }}>
+        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 10, backgroundColor: 'white', paddingTop: 50 }}>
             <StatusBar backgroundColor='white' barStyle='dark-content' />
             <TouchableOpacity onPress={() => { navigation.navigate('Exercises List') }}>
                 <View style={styles.button}>
@@ -41,12 +54,22 @@ const HomeScreen = ({ navigation }) => {
                     <Ionicons name='create-outline' size={100} color='white' />
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Alert.alert("You don't have any routine created. Please create a routine.") }>
-                <View style={styles.buttonDisabled}>
-                    <Text style={styles.text}>View My Routines</Text>
-                    <Ionicons name='create-outline' size={100} color='white' />
-                </View>
-            </TouchableOpacity>
+            {checkRoutines == 0 ?
+                <TouchableOpacity onPress={() => Alert.alert("You don't have any routine created. Please create a routine.")}>
+                    <View style={styles.buttonDisabled}>
+                        <Text style={styles.text}>View My Routines</Text>
+                        <Ionicons name='create-outline' size={100} color='white' />
+                    </View>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() => navigation.navigate('My Routines')}>
+                    <View style={styles.button}>
+                        <Text style={styles.text}>View My Routines</Text>
+                        <Ionicons name='create-outline' size={100} color='white' />
+                    </View>
+                </TouchableOpacity>
+            }
+
 
             <Text>
                 {user.uid}
@@ -72,7 +95,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonDisabled: {
-        height:180,
+        height: 180,
         width: '100%',
         backgroundColor: 'grey',
         padding: 30,

@@ -65,7 +65,7 @@ const ProgressScreen = ({ navigation }) => {
             <Text style={styles.text}>Add Your Current Weight</Text>
             <TextInput style={styles.input} placeholder='Weight' keyboardType='numeric' onChangeText={(val) => setNewWeight(val)} />
             {newWeight!=null ?
-                <TouchableOpacity onPress={() => addWeigth}>
+                <TouchableOpacity onPress={() => addWeigth()}>
                     <View style={styles.button}>
                         <Text style={styles.text}>Add Weight</Text>
                         <Ionicons name='create-outline' size={60} color='white' />

@@ -37,13 +37,14 @@ const theme2 = {
 
 const CreateRoutine = ({ navigation }) => {
     const { user } = React.useContext(AuthContext)
-    const [isLoading, setLoading] = React.useState(true);
+    const { isLoading } = React.useContext(AuthContext)
     const [visible, setVisible] = React.useState(false);
     const [selectedItem, setSelectedItem] = React.useState(null);
-    const [exercises, setExercises] = React.useState({
-        chest: null, triceps: null, shoulder: null,
-        legs: null, glutes: null, abs: null, back: null, biceps: null
-    });
+    const { exercises } = React.useContext(AuthContext);
+    // const [exercises, setExercises] = React.useState({
+    //     chest: null, triceps: null, shoulder: null,
+    //     legs: null, glutes: null, abs: null, back: null, biceps: null
+    // });
     const [title, setTitle] = React.useState(null);
     const [routine, setRoutine] = React.useState([]);
 
@@ -51,45 +52,45 @@ const CreateRoutine = ({ navigation }) => {
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
     }, []);
 
-    const fetchExercises = async () => {
-        try {
-            const list = [];
+    // const fetchExercises = async () => {
+    //     try {
+    //         const list = [];
 
-            await db.
-                collection('exercises')
-                .get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const { title, description, level,
-                            muscles, image } = doc.data();
-                        const id = doc.id;
-                        list.push({
-                            title,
-                            description,
-                            image,
-                            level,
-                            muscles,
-                            id
-                        })
-                    })
-                    let chest = [], triceps = [], biceps = [], shoulder = [], glutes = [], back = [], abs = [], legs = []
-                    list.map(function (exercise) {
-                        if (exercise.muscles.includes('Chest')) chest.push(exercise);
-                        if (exercise.muscles.includes('Shoulder')) shoulder.push(exercise);
-                        if (exercise.muscles.includes('Triceps')) triceps.push(exercise);
-                        if (exercise.muscles.includes('Biceps')) biceps.push(exercise);
-                        if (exercise.muscles.includes('Glutes')) glutes.push(exercise);
-                        if (exercise.muscles.includes('Back')) back.push(exercise);
-                        if (exercise.muscles.includes('Abs')) abs.push(exercise);
-                        if (exercise.muscles.includes('Legs')) legs.push(exercise);
-                    });
-                    setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
-                    setLoading(false);
-                })
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    //         await db.
+    //             collection('exercises')
+    //             .get()
+    //             .then((querySnapshot) => {
+    //                 querySnapshot.forEach((doc) => {
+    //                     const { title, description, level,
+    //                         muscles, image } = doc.data();
+    //                     const id = doc.id;
+    //                     list.push({
+    //                         title,
+    //                         description,
+    //                         image,
+    //                         level,
+    //                         muscles,
+    //                         id
+    //                     })
+    //                 })
+    //                 let chest = [], triceps = [], biceps = [], shoulder = [], glutes = [], back = [], abs = [], legs = []
+    //                 list.map(function (exercise) {
+    //                     if (exercise.muscles.includes('Chest')) chest.push(exercise);
+    //                     if (exercise.muscles.includes('Shoulder')) shoulder.push(exercise);
+    //                     if (exercise.muscles.includes('Triceps')) triceps.push(exercise);
+    //                     if (exercise.muscles.includes('Biceps')) biceps.push(exercise);
+    //                     if (exercise.muscles.includes('Glutes')) glutes.push(exercise);
+    //                     if (exercise.muscles.includes('Back')) back.push(exercise);
+    //                     if (exercise.muscles.includes('Abs')) abs.push(exercise);
+    //                     if (exercise.muscles.includes('Legs')) legs.push(exercise);
+    //                 });
+    //                 setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
+    //                 setLoading(false);
+    //             })
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // };
 
     const submitRoutine = async () => {
         await db.collection('routines')
@@ -109,12 +110,12 @@ const CreateRoutine = ({ navigation }) => {
             });
     }
 
-    useFocusEffect(
-        React.useCallback(() => {
-            setLoading(true);
-            fetchExercises();
-        }, [])
-    );
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         setLoading(true);
+    //         fetchExercises();
+    //     }, [])
+    // );
 
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
@@ -127,7 +128,7 @@ const CreateRoutine = ({ navigation }) => {
         else { null; }
     }
 
-    
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>

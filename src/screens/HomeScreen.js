@@ -32,12 +32,14 @@ const HomeScreen = ({ navigation }) => {
 
     const { checkRoutines } = React.useContext(AuthContext);
     const { fetchRoutines } = React.useContext(AuthContext);
-    const { fetchUserInfo } = React.useContext(AuthContext); 
+    const { fetchUserInfo } = React.useContext(AuthContext);
+    const { fetchExercises } = React.useContext(AuthContext)
 
     useFocusEffect(
         React.useCallback(() => {
             fetchRoutines();
             fetchUserInfo();
+            fetchExercises();
         }, [])
     );
 

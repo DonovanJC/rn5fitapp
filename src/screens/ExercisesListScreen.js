@@ -37,7 +37,6 @@ const theme2 = {
 const ExercisesList = () => {
     const { isLoading } = React.useContext(AuthContext);
     const { exercises } = React.useContext(AuthContext);
-    const { fetchExercises } = React.useContext(AuthContext)
     // const [isLoading, setLoading] = React.useState(true);
     const [visible, setVisible] = React.useState(false);
     const [selectedItem, setSelectedItem] = React.useState(null);
@@ -48,7 +47,6 @@ const ExercisesList = () => {
 
     useEffect(() => {
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-        fetchExercises();
     }, [])
 
 
@@ -125,7 +123,6 @@ const ExercisesList = () => {
                 </View>
                 :
                 <View>
-                    {/* {console.log(exercises.chest)} */}
                     <ScrollView>
                         <List.AccordionGroup>
                             <List.Accordion

@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, Button, Alert, TouchableOpacity, Scr
 import { AuthContext } from "../navigation/AuthProvider";
 import Firebase from "../database/firebase";
 import { Ionicons } from "@expo/vector-icons";
+import Moment from "moment";
 
 const db = Firebase.firestore();
 
@@ -16,13 +17,16 @@ const NewUserScreen = ({ navigation }) => {
     const [age, setAge] = React.useState(null);
 
     const addUserInfo = async () => {
-        await db.collection('usersInfo')
-            .add({
+        let date = new Date();
+        date = Moment(date).format('d MMM');
+
+        await db.collection('usersInfo').doc(user.uid)
+            .set({
                 name: name,
                 surname: surname,
                 age: age,
-                height: [height],
-                weight: [weight],
+                height: [{ height, postTime: date }],
+                weight: [{ weight, postTime: date }],
                 userId: user.uid,
                 email: user.email
             })

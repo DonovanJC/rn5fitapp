@@ -31,7 +31,7 @@ const RoutinesScreen = () => {
                 left={props => <List.Icon {...props} icon="equal" />}
                 theme={theme} id={item.id}>
                 {item.routine.map(exercise => {
-                    { console.log(exercise.title) }
+                    // { console.log(exercise.title) }
                     return (
                         <List.Item title={exercise.title} key={exercise.id}
                             left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}

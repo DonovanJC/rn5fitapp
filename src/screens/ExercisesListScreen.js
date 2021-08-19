@@ -107,8 +107,8 @@ const ExercisesList = () => {
         return (
             <>
                 <View style={{ borderLeftWidth: 2, borderRightWidth: 2, borderBottomWidth: 1, borderTopWidth: 1, borderRadius: 3, borderColor: '#6e45e6' }}>
-                    <List.Item title={item.title} 
-                    left={() => <Image style={styles.tinyLogo} source={{ uri: item.image }} />} onPress={() => { showModal(); setSelectedItem(item) }}
+                    <List.Item title={item.title}
+                        left={() => <Image style={styles.tinyLogo} source={{ uri: item.image }} />} onPress={() => { showModal(); setSelectedItem(item) }}
                     />
                 </View>
             </>
@@ -132,49 +132,105 @@ const ExercisesList = () => {
                                 title="Chest"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme} id='1'>
-                                <FlatList data={exercises.chest} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.chest.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Back"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme2} id='2'>
-                                <FlatList data={exercises.back} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.back.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Legs"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme} id='3'>
-                                <FlatList data={exercises.legs} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.legs.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Shoulder"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme2} id='4'>
-                                <FlatList data={exercises.shoulder} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.shoulder.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Abs"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme} id='5'>
-                                <FlatList data={exercises.abs} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.abs.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Glutes"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme2} id='6'>
-                                <FlatList data={exercises.glutes} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.glutes.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Biceps"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme} id='7'>
-                                <FlatList data={exercises.biceps} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.biceps.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                             <List.Accordion
                                 title="Triceps"
                                 left={props => <List.Icon {...props} icon="equal" />}
                                 theme={theme2} id='8'>
-                                <FlatList data={exercises.triceps} renderItem={renderItem} keyExtractor={(item, index) => { return item.id }} />
+                                {exercises.triceps.map(exercise => {
+                                    return (
+                                        <List.Item title={exercise.title} key={exercise.id}
+                                            left={() => <Image style={styles.tinyLogo} source={{ uri: exercise.image }} />}
+                                            onPress={() => { showModal(); setSelectedItem(exercise) }}
+                                        />
+                                    )
+                                })}
                             </List.Accordion>
                         </List.AccordionGroup>
                     </ScrollView>

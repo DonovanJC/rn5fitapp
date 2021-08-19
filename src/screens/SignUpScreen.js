@@ -175,6 +175,7 @@ const SignUpScreen = ({ navigation }) => {
                     }
 
                     <Text style={[styles.text_footer, { marginTop: 35 }]}>Password</Text>
+                    
                     <View style={styles.action}>
                         <Feather
                             name='lock'

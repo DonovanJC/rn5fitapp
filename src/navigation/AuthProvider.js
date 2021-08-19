@@ -7,6 +7,8 @@ const db = Firebase.firestore();
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    const [userInfo, setUserInfo] = useState(null);
+    const [checkNewUser, setCheckNewUser] = useState(null);
     const [user, setUser] = useState(null);
     const [checkRoutines, setCheckRoutines] = useState(0);
     const [routines, setRoutines] = useState(null);
@@ -24,6 +26,10 @@ export const AuthProvider = ({ children }) => {
                 checkRoutines,
                 exercises,
                 routines,
+                checkNewUser,
+                setCheckNewUser,
+                setUserInfo,
+                userInfo,
                 login: async (email, password) => {
                     try {
                         await auth.signInWithEmailAndPassword(email, password);
@@ -34,6 +40,7 @@ export const AuthProvider = ({ children }) => {
                 register: async (email, password) => {
                     try {
                         await auth.createUserWithEmailAndPassword(email, password);
+                        setCheckNewUser(null);
                     } catch (e) {
                         console.log(e);
                     }
@@ -45,6 +52,28 @@ export const AuthProvider = ({ children }) => {
                         console.log(e);
                     }
                 },
+                fetchUserInfo: async () => {
+                    try {
+                        await db.collection('usersInfo')
+                            .where('userId', '==', user.uid)
+                            .get()
+                            .then((querySnapshot) => {
+                                if (querySnapshot.size == 0) {
+                                    setCheckNewUser(true);
+                                }
+                                else {
+                                    setCheckNewUser(false);
+                                    querySnapshot.forEach((doc) => {
+                                        const info = doc.data();
+                                        setUserInfo(info);
+                                        console.log(userInfo);
+                                    });
+                                }
+                            })
+                    } catch (e) {
+                        console.log(e)
+                    }
+                },
                 fetchRoutines: async () => {
                     try {
                         const list = [];
@@ -54,7 +83,7 @@ export const AuthProvider = ({ children }) => {
                             .then((querySnapshot) => {
                                 setCheckRoutines(querySnapshot.size);
                                 querySnapshot.forEach((doc) => {
-                                    const {routine, title, userId} = doc.data();
+                                    const { routine, title, userId } = doc.data();
                                     const id = doc.id;
                                     list.push({
                                         routine, title, userId, id

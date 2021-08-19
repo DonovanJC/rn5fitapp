@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Firebase from "../database/firebase";
 
 const db = Firebase.firestore();
+const auth = Firebase.auth();
 
 // const getFood = async () => {
 //     try {
@@ -28,14 +29,15 @@ const db = Firebase.firestore();
 
 
 const HomeScreen = ({ navigation }) => {
-    const { routines } = React.useContext(AuthContext);
-    const { user } = React.useContext(AuthContext);
+
     const { checkRoutines } = React.useContext(AuthContext);
     const { fetchRoutines } = React.useContext(AuthContext);
+    const { fetchUserInfo } = React.useContext(AuthContext); 
 
     useFocusEffect(
         React.useCallback(() => {
             fetchRoutines();
+            fetchUserInfo();
         }, [])
     );
 
@@ -70,10 +72,6 @@ const HomeScreen = ({ navigation }) => {
                 </TouchableOpacity>
             }
 
-
-            <Text>
-                {user.uid}
-            </Text>
 
             {/* <Button title='Create Routine' onPress={() => {
                 getFood();

@@ -36,8 +36,15 @@ const ExploreScreen = ({ navigation }) => {
     const { places } = React.useContext(AuthContext);
     const { fetchPosts } = React.useContext(AuthContext);
 
+
     let mapIndex = 0;
     let mapAnimation = new Animated.Value(0);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchPosts();
+        }, [])
+    );
 
 
     ///get the location of selected card item and move map to point to it

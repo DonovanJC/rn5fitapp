@@ -52,46 +52,7 @@ const CreateRoutine = ({ navigation }) => {
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
     }, []);
 
-    // const fetchExercises = async () => {
-    //     try {
-    //         const list = [];
-
-    //         await db.
-    //             collection('exercises')
-    //             .get()
-    //             .then((querySnapshot) => {
-    //                 querySnapshot.forEach((doc) => {
-    //                     const { title, description, level,
-    //                         muscles, image } = doc.data();
-    //                     const id = doc.id;
-    //                     list.push({
-    //                         title,
-    //                         description,
-    //                         image,
-    //                         level,
-    //                         muscles,
-    //                         id
-    //                     })
-    //                 })
-    //                 let chest = [], triceps = [], biceps = [], shoulder = [], glutes = [], back = [], abs = [], legs = []
-    //                 list.map(function (exercise) {
-    //                     if (exercise.muscles.includes('Chest')) chest.push(exercise);
-    //                     if (exercise.muscles.includes('Shoulder')) shoulder.push(exercise);
-    //                     if (exercise.muscles.includes('Triceps')) triceps.push(exercise);
-    //                     if (exercise.muscles.includes('Biceps')) biceps.push(exercise);
-    //                     if (exercise.muscles.includes('Glutes')) glutes.push(exercise);
-    //                     if (exercise.muscles.includes('Back')) back.push(exercise);
-    //                     if (exercise.muscles.includes('Abs')) abs.push(exercise);
-    //                     if (exercise.muscles.includes('Legs')) legs.push(exercise);
-    //                 });
-    //                 setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
-    //                 setLoading(false);
-    //             })
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // };
-
+    ///Function to add a new routine for a user to the firestore database in the 'routines' collection
     const submitRoutine = async () => {
         await db.collection('routines')
             .add({
@@ -109,17 +70,11 @@ const CreateRoutine = ({ navigation }) => {
                 console.log(error);
             });
     }
-
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         setLoading(true);
-    //         fetchExercises();
-    //     }, [])
-    // );
-
+///Toggle modal
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
-
+    
+///Validation to avoid repeated exercises
     const addExercise = (item) => {
         let check = routine.find(each => each.title === item.title);
         if (!check) {

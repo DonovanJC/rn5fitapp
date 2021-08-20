@@ -21,6 +21,7 @@ const CalculatorScreen = ({ navigation }) => {
         setAge(text);
     }
 
+///Function to calculate both Bmi and Bmr based on input data.
     const calculateBmiBmr = (height, weight, age) => {
         //calculation
         var resultBmi = (parseFloat(weight) * 10000) / (parseFloat(height) * parseFloat(height));
@@ -61,17 +62,20 @@ const CalculatorScreen = ({ navigation }) => {
                         underlineColorAndroid="transparent"
                         placeholder="Height (cm)"
                         autoCapitalize="none"
+                        keyboardType='numeric'
                         onChangeText={handleHeight} />
                     <Text style={styles.label}>Weight</Text>
                     <TextInput style={styles.input}
                         underlineColorAndroid="transparent"
                         placeholder="Weight (Kg)"
                         autoCapitalize="none"
+                        keyboardType='numeric'
                         onChangeText={handleWeight} />
                     <Text style={styles.label}>Age</Text>
                     <TextInput style={styles.input}
                         underlineColorAndroid="transparent"
                         placeholder="Age"
+                        keyboardType='numeric'
                         autoCapitalize="none"
                         onChangeText={handleAge} />
                     <View >

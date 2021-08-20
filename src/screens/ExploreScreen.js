@@ -7,6 +7,8 @@ import {
     ActivityIndicator, StatusBar
 } from "react-native";
 
+import { AuthContext } from "../navigation/AuthProvider";
+
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { markers } from '../model/mapdata';
@@ -31,57 +33,10 @@ const ExploreScreen = ({ navigation }) => {
     }
     const [isLoading, setLoading] = React.useState(true);
     const [region, setRegion] = React.useState(initialMapState.region);
-    const [places, setPlaces] = React.useState(markers);
+    const { places } = React.useContext(AuthContext);
+    const { fetchPosts } = React.useContext(AuthContext); 
 
-    const fetchPosts = async () => {
-        try {
-            const list = [];
-
-            await Firebase.firestore().
-                collection('places')
-                .get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const { title, description, rating,
-                            url, latitude, longitude } = doc.data();
-
-                        list.push({
-                            coordinate: {
-                                latitude,
-                                longitude
-                            },
-                            title,
-                            description,
-                            image: url,
-                            rating
-                        })
-                    })
-                    setPlaces(list);
-                    setLoading(false);
-                })
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    let mapIndex = 0;
-    let mapAnimation = new Animated.Value(0);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            setLoading(true);
-            fetchPosts();
-            // console.log(places);
-        }, [])
-    )
-
-    // useEffect(() => {
-    //     fetchPosts();
-    //     if (!isLoading) {
-    //         console.log(places);
-    //     }
-    // }, []);
-
+    ///get the location of selected card item and move map to point to it
     useEffect(() => {
         mapAnimation.addListener(({ value }) => {
             let index = Math.floor(value / CARD_WIDTH + 0.3); //animated 30% away from landing on next
@@ -109,7 +64,7 @@ const ExploreScreen = ({ navigation }) => {
             }, 10);
         });
     });
-
+////Allow Items Card's slide
     const interpolations = places.map((marker, index) => {
         const inputRange = [
             (index - 1) * CARD_WIDTH,
@@ -125,7 +80,7 @@ const ExploreScreen = ({ navigation }) => {
 
         return { scale };
     });
-
+////Move map to ppoint to location when marker is clicked
     const onMarkerPress = (mapEventData) => {
         const markerId = mapEventData._targetInst.return.key;
         let x = (markerId * CARD_WIDTH) + (markerId * 20);
@@ -275,7 +230,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     searchBox: {
         position: 'absolute',

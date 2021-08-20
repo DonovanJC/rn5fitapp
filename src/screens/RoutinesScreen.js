@@ -24,6 +24,7 @@ const RoutinesScreen = () => {
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
 
+    ///Shows a List of your created routines, Screen disabled if user has not created any yet.
     const renderItem = ({ item }) => {
         return (
             <List.Accordion

@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
         legs: null, glutes: null, abs: null, back: null, biceps: null
     });
     const [isLoading, setLoading] = useState(true);
+    const [places, setPlaces] = useState(null);
 
     return (
         <AuthContext.Provider
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
                 setCheckNewUser,
                 setUserInfo,
                 userInfo,
+                places,
                 login: async (email, password) => {
                     try {
                         await auth.signInWithEmailAndPassword(email, password);
@@ -129,6 +131,36 @@ export const AuthProvider = ({ children }) => {
                                 });
                                 setExercises({ chest, shoulder, triceps, biceps, glutes, back, abs, legs });
                                 setLoading(false);
+                            })
+                    } catch (e) {
+                        console.log(e);
+                    }
+                },
+                fetchPosts: async () => {
+                    try {
+                        const list = [];
+
+                        await Firebase.firestore().
+                            collection('places')
+                            .get()
+                            .then((querySnapshot) => {
+                                querySnapshot.forEach((doc) => {
+                                    const { title, description, rating,
+                                        url, latitude, longitude } = doc.data();
+
+                                    list.push({
+                                        coordinate: {
+                                            latitude,
+                                            longitude
+                                        },
+                                        title,
+                                        description,
+                                        image: url,
+                                        rating
+                                    })
+                                })
+                                setPlaces(list);
+                                // setLoading(false);
                             })
                     } catch (e) {
                         console.log(e);

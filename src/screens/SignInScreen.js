@@ -53,25 +53,6 @@ const SignInScreen = ({ navigation }) => {
         });
     }
 
-    // const loginHandle = (email, password) => {
-    //     const foundUser = users.filter( item => {
-    //         return email == item.email && password == item.password
-    //     });
-
-    //     if (data.email.length == 0 || data.password.length == 0) {
-    //         Alert.alert('Wrong Input', 'User email or password cannot be empty.',
-    //         [{ text: 'Okay'} ]);
-    //         return;
-    //     }
-
-    //     if(foundUser.length == 0) {
-    //         Alert.alert('Invalid User:',
-    //          'User email or password is incorrect.',[{text:'Okay'}]);
-    //          return;
-    //     }
-    //     signIn(foundUser);
-    // }
-
     const handleValidEmail = (val) => {
         console.log(val);
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

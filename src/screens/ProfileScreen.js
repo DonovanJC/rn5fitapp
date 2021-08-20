@@ -1,16 +1,21 @@
 import React from "react";
 import { View, Text, StatusBar, StyleSheet } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
-import Moment from "moment";
+import { FontAwesome } from "@expo/vector-icons";
 
+////Shows personal info of corresponding User
 const ProfileScreen = ({ navigation }) => {
     const { userInfo } = React.useContext(AuthContext);
 
     return (
         <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'space-evenly' }}>
             <StatusBar backgroundColor='transparent' barStyle='dark-content' />
-            <View style={{ flexDirection: 'row', padding:5, marginTop:65 }}>
-                <View style={{ flexDirection: 'column', borderWidth:1,borderRadius:10, backgroundColor:'#6e45e6' }}>
+            <View style={{flexDirection:'row', justifyContent:'space-around', alignItems:'center', marginLeft:20, marginTop:35}}>
+                <FontAwesome name='user-circle' size={40} />
+                <Text style={{fontSize:30, fontWeight:'bold'}}>Your Details</Text>
+            </View>
+            <View style={{ flexDirection: 'row', padding: 5 }}>
+                <View style={{ flexDirection: 'column', borderWidth: 1, borderRadius: 10, backgroundColor: '#6e45e6' }}>
                     <Text style={styles.text2}>Name: </Text>
                     <Text style={styles.text2}>Surname: </Text>
                     <Text style={styles.text2}>Your Email: </Text>
@@ -18,7 +23,7 @@ const ProfileScreen = ({ navigation }) => {
                     <Text style={styles.text2}>Current Weight: </Text>
                     <Text style={styles.text2}>Current Height: </Text>
                 </View>
-                <View style={{ flexDirection: 'column', alignItems:'flex-start' }}>
+                <View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                     <Text style={styles.text}>{userInfo.name}</Text>
                     <Text style={styles.text}>{userInfo.surname}</Text>
                     <Text style={styles.text}>{userInfo.email}</Text>
@@ -34,14 +39,14 @@ const ProfileScreen = ({ navigation }) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-    text:{
+    text: {
         padding: 35,
-        fontSize:14
+        fontSize: 14
     },
-    text2:{
+    text2: {
         padding: 35,
-        fontSize:14,
-        fontWeight:'bold',
-        color:'white'
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: 'white'
     }
 })

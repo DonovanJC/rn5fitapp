@@ -21,6 +21,7 @@ const ProgressScreen = ({ navigation }) => {
         }, [])
     );
 
+    ///Gets User's weight Array from database and uses it to Plot a Progress Graph
     const setGraphData = () => {
         let labels = []
         let data = []
@@ -39,6 +40,8 @@ const ProgressScreen = ({ navigation }) => {
             ]
         }
     }
+
+    ///Adds current weight to the weight Array in the database, along with the date the weight has been added
 
     const addWeigth = async () => {
         let updatedWeight = userInfo.weight

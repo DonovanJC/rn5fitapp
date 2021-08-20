@@ -16,6 +16,8 @@ const NewUserScreen = ({ navigation }) => {
     const [surname, setSurname] = React.useState(null);
     const [age, setAge] = React.useState(null);
 
+    ///Screnn Presented when a user logs for the first time (New User)
+    ///Gets some info such as height, weight, and name and stores it in the database
     const addUserInfo = async () => {
         let date = new Date();
         date = Moment(date).format('d MMM');

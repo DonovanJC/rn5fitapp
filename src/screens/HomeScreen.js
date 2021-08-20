@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Button, View, Text, TouchableOpacity, StyleSheet, StatusBar, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { AuthContext } from "../navigation/AuthProvider";
@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Firebase from "../database/firebase";
 
+//Set up connecton with Firebase Database
 const db = Firebase.firestore();
 const auth = Firebase.auth();
 
@@ -33,13 +34,15 @@ const HomeScreen = ({ navigation }) => {
     const { checkRoutines } = React.useContext(AuthContext);
     const { fetchRoutines } = React.useContext(AuthContext);
     const { fetchUserInfo } = React.useContext(AuthContext);
-    const { fetchExercises } = React.useContext(AuthContext)
-
+    const { fetchExercises } = React.useContext(AuthContext);
+    const { fetchPosts } = React.useContext(AuthContext)
+    ///Get routines, userInfo, Exercises and Places from the Firestore database
     useFocusEffect(
         React.useCallback(() => {
             fetchRoutines();
             fetchUserInfo();
             fetchExercises();
+            fetchPosts();
         }, [])
     );
 
@@ -58,6 +61,9 @@ const HomeScreen = ({ navigation }) => {
                     <Ionicons name='create-outline' size={100} color='white' />
                 </View>
             </TouchableOpacity>
+
+            {/* Shows a button that takes you to your routines if You have any existing routine,
+             but that will prompt a message if none routine has been created yet */}
             {checkRoutines == 0 ?
                 <TouchableOpacity onPress={() => Alert.alert("You don't have any routine created. Please create a routine.")}>
                     <View style={styles.buttonDisabled}>

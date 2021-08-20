@@ -31,10 +31,14 @@ const ExploreScreen = ({ navigation }) => {
             longitudeDelta: 0.641,
         }
     }
-    const [isLoading, setLoading] = React.useState(true);
+    const [isLoading, setLoading] = React.useState(false);
     const [region, setRegion] = React.useState(initialMapState.region);
     const { places } = React.useContext(AuthContext);
-    const { fetchPosts } = React.useContext(AuthContext); 
+    const { fetchPosts } = React.useContext(AuthContext);
+
+    let mapIndex = 0;
+    let mapAnimation = new Animated.Value(0);
+
 
     ///get the location of selected card item and move map to point to it
     useEffect(() => {
@@ -64,7 +68,7 @@ const ExploreScreen = ({ navigation }) => {
             }, 10);
         });
     });
-////Allow Items Card's slide
+    ////Allow Items Card's slide
     const interpolations = places.map((marker, index) => {
         const inputRange = [
             (index - 1) * CARD_WIDTH,
@@ -80,7 +84,7 @@ const ExploreScreen = ({ navigation }) => {
 
         return { scale };
     });
-////Move map to ppoint to location when marker is clicked
+    ////Move map to ppoint to location when marker is clicked
     const onMarkerPress = (mapEventData) => {
         const markerId = mapEventData._targetInst.return.key;
         let x = (markerId * CARD_WIDTH) + (markerId * 20);

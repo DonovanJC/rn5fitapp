@@ -56,7 +56,7 @@ const ProgressScreen = ({ navigation }) => {
                 .set({
                     weight: updatedWeight
                 }, { merge: true });
-            navigation.goBack();
+            navigation.navigate('Home');
         } catch (e) {
             console.log(e);
         }
